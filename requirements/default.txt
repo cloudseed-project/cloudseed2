@@ -1,0 +1,8 @@
+boto
+confypy
+docopt
+jinja2
+paramiko
+pyyaml
+salt-cloud
+salt
