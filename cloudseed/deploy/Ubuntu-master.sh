@@ -4,12 +4,6 @@ mkdir -p /etc/salt/pki
 echo "{{ minion }}" > /etc/salt/minion
 echo "{{ vm.cloudseed.master }}" > /etc/salt/master
 
-echo "{{ vm.saltcloud.providers }}" > /etc/salt/cloud.providers; chmod 600 /etc/salt/cloud.providers
-echo "{{ vm.saltcloud.profiles }}" > /etc/salt/cloud.profiles; chmod 600 /etc/salt/cloud.profiles
-echo "{{ vm.saltcloud.config }}" > /etc/salt/cloud; chmod 600 /etc/salt/cloud
-echo "{{ vm.saltcloud.private_key }}" > /etc/salt/cloud.pem; chmod 600 /etc/salt/cloud.pem
-
-
 # add-apt-repository requires an additional dep and is in different packages
 # on different systems. Although seemingly ubiquitous it is not a standard,
 # and is only a convenience script intended to accomplish the below two steps
@@ -27,5 +21,5 @@ mkdir -p /etc/salt/pki/minion
 mv master.pub /etc/salt/pki/minion/minion.pub
 mv master.pem /etc/salt/pki/minion/minion.pem
 apt-get install -y -o DPkg::Options::=--force-confold salt-minion
-sleep 4; /usr/bin/salt "master" state.highstate
+#sleep 4; /usr/bin/salt "master" state.highstate
 # minion will be started automatically by install

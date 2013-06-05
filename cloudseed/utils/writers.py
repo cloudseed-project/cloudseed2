@@ -1,5 +1,6 @@
 import logging
 import yaml
+from cloudseed.compat import StringIO
 
 log = logging.getLogger(__name__)
 
@@ -22,3 +23,9 @@ def write_string(filename, data):
     except IOError:
         log.error('Failed writing file %s with %s', filename, data)
         raise
+
+
+def write_stringio(data):
+    obj = StringIO()
+    obj.write(data)
+    return obj

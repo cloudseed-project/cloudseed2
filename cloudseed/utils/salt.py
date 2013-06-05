@@ -1,6 +1,19 @@
 import os
+from cloudseed.utils import ssh
+from cloudseed.utils import env
 from .writers import write_string
 from .filesystem import mkdirs
+
+
+def highstate(minion_id=None, grain=None):
+
+    cloud = env.cloud()
+    client = ssh.master_client(cloud)
+
+    if minion_id:
+        ssh.sudo(client, 'salt \'%s\' state.highstate' % minion_id)
+    elif grain:
+        ssh.sudo(client, 'salt -G \'%s\' state.highstate' % grain)
 
 
 def create_default_salt_folders(prefix=''):

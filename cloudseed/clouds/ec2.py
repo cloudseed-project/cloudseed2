@@ -6,6 +6,8 @@ import cloudseed.cloud
 from cloudseed.utils import filesystem
 from cloudseed.utils import writers
 from cloudseed.utils import env
+from cloudseed.utils import sync
+from cloudseed.utils import salt
 
 
 log = logging.getLogger(__name__)
@@ -30,6 +32,9 @@ def __virtual__():
 
 
 def sync_full_manifest(manifest):
+    cloud = cloudseed.cloud.Cloud(__opts__)
+    vm_ = cloud.vm_profile('master')
+
     keyname = '%s-%s' % (env.location_name(), env.env_name())
 
     filename = os.path.join(
@@ -38,6 +43,22 @@ def sync_full_manifest(manifest):
         '%s.pem' % keyname)
 
     manifest.add(filename, '/etc/salt/cloud.pem')
+
+    # changing the path to the private_key file to work on
+    # the bootstrapped master
+    providers = filesystem.read_file(__opts__['providers_config'])
+
+    providers_data = yaml.load(providers)
+    master_provider = providers_data[vm_['provider']]
+
+    master_provider['private_key'] = '/etc/salt/cloud.pem'
+    cloud_providers = yaml.safe_dump(providers_data, default_flow_style=False)
+
+    manifest.remove('cloudseed/current/salt/cloud.providers')
+
+    manifest.add(
+        writers.write_stringio(cloud_providers),
+        '/etc/salt/cloud.providers')
 
 
 def sync_partial_manifest(manifest):
@@ -64,26 +85,6 @@ def create_master(vm_=None, call=None):
     bootstrap_master(cloud)
 
     master = filesystem.read_file(__opts__['master_config'])
-    cloud_profiles = filesystem.read_file(__opts__['vm_config'])
-    cloud_config = filesystem.read_file(__opts__['conf_file'])
-
-    providers = filesystem.read_file(__opts__['providers_config'])
-
-    providers_data = yaml.load(providers)
-
-    master_provider = providers_data[vm_['provider']]
-
-    private_key = filesystem.read_file(
-        os.path.abspath(master_provider['private_key']))
-
-    master_provider['private_key'] = '/etc/salt/cloud.pem'
-    cloud_providers = yaml.safe_dump(providers_data, default_flow_style=False)
-
-    vm_['saltcloud'] = {
-    'config': cloud_config,
-    'profiles': cloud_profiles,
-    'providers': cloud_providers,
-    'private_key': private_key}
 
     vm_['cloudseed'] = {
         'master': master
@@ -105,6 +106,9 @@ def create_master(vm_=None, call=None):
 
     with open(conf_filename, 'w') as f:
         f.write(yaml.safe_dump(conf, default_flow_style=False))
+
+    sync.sync_full()
+    salt.highstate(minion_id='master')
 
     return data
 
@@ -160,18 +164,10 @@ def bootstrap_master(cloud):
             provider['private_key'] = new_path
 
 
-
-
-
-
     #securitygroup:
   #  - default
   #  - ssh
 
-    # for each in providers:
-    #     each['ssh_interface'] = 'public_ips'
-    #     each['keyname'] = keyname
-    #     each['private_key'] = 'path/to/key'
 
 
 def security_group_name(name=None):
@@ -198,9 +194,7 @@ def bootstrap_create_keypair(keyname, filename):
         elif key == 'keyMaterial':
             data = value
 
-    with open(filename, 'w') as f:
-        f.write(data)
-
+    writers.write_string(filename, data)
     os.chmod(filename, 0600)
 
 

@@ -1,11 +1,14 @@
 import os
 import tempfile
 import functools
+import yaml
 from cloudseed.utils import sftp
 from cloudseed.utils import ssh
 from cloudseed.utils.archive import Manifest
 from cloudseed.utils.archive import Archive
 from cloudseed.utils import env
+from cloudseed.utils import filesystem
+from cloudseed.utils import writers
 
 
 def sync_archive(local, remote, cloud):
@@ -22,12 +25,17 @@ def sync_partial():
     manifest = Manifest()
     manifest.add('cloudseed/current/srv/salt', file_roots)
     manifest.add('cloudseed/current/srv/pillar', pillar_roots)
-    manifest.add('cloudseed/current/salt/cloud.profiles', '/etc/salt/cloud.profiles')
+
+    manifest.add(
+        'cloudseed/current/salt/cloud.profiles',
+        '/etc/salt/cloud.profiles')
 
     vm_ = cloud.vm_profile('master')
     provider = cloud.provider(vm_)
 
-    action = cloud.clouds.get('%s.sync_partial_manifest' % provider, lambda x: None)
+    action = cloud.clouds.get(
+        '%s.sync_partial_manifest' % provider, lambda x: None)
+
     action(manifest)
 
     tmp = tempfile.NamedTemporaryFile(delete=False)
@@ -36,7 +44,6 @@ def sync_partial():
 
 
 def sync_full():
-
     cloud = env.cloud()
 
     file_roots = cloud.opts['file_roots']['base'][0]
@@ -45,20 +52,47 @@ def sync_full():
     manifest = Manifest()
     manifest.add('cloudseed/current/srv/salt', file_roots)
     manifest.add('cloudseed/current/srv/pillar', pillar_roots)
-    manifest.add('cloudseed/current/salt/cloud.profiles', '/etc/salt/cloud.profiles')
-    manifest.add('cloudseed/current/salt/cloud.providers', '/etc/salt/cloud.providers')
-    manifest.add('cloudseed/current/salt/cloud', '/etc/salt/cloud')
+
+    manifest.add(
+        'cloudseed/current/salt/cloud.profiles',
+        '/etc/salt/cloud.profiles')
+
+    # the cloud providers may need a rewrite (private_key path
+    # if applicable, etc) and the salt-cloud conf will need to know
+    # the master's IP for subsequent minions. Changes to salt-cloud
+    # conf are fixed, the providers will vary by provider.
+
+    manifest.add(
+        'cloudseed/current/salt/cloud.providers',
+        '/etc/salt/cloud.providers')
+
+    _add_saltcloud_conf(manifest, cloud)
 
     vm_ = cloud.vm_profile('master')
     provider = cloud.provider(vm_)
 
-    action = cloud.clouds.get('%s.sync_full_manifest' % provider, lambda x: None)
+    action = cloud.clouds.get(
+        '%s.sync_full_manifest' % provider, lambda x: None)
+
     action(manifest)
 
     tmp = tempfile.NamedTemporaryFile(delete=False)
     Archive.tar(tmp, manifest)
 
     _sync_full_action(tmp.name, cloud)
+
+
+def _add_saltcloud_conf(manifest, cloud):
+    saltcloud_conf = yaml.load(
+        filesystem.read_file('cloudseed/current/salt/cloud'))
+
+    saltcloud_conf['minion'] = {
+    'master': cloud.opts['cloudseed']['ip_address']}
+
+    saltcloud_obj = writers.write_stringio(
+        yaml.safe_dump(saltcloud_conf, default_flow_style=False))
+
+    manifest.add(saltcloud_obj, '/etc/salt/cloud')
 
 
 def _sync_action(filename, cloud, run, sudo):
@@ -86,7 +120,6 @@ def _sync_full_action(filename, cloud):
     provider = cloud.provider(vm_)
 
     _sync_action(filename, cloud, run, sudo)
-
 
     sudo('chmod 600 /etc/salt/cloud.profiles')
     sudo('chmod 600 /etc/salt/cloud.providers')
