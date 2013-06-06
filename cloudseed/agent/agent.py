@@ -73,7 +73,7 @@ def saltcloud_profile(name, tag):
 
     out_stream = subprocess.PIPE
     err_stream = subprocess.PIPE
-    args = ['salt-cloud', '-p', name, tag]
+    args = ['salt-cloud', '-p', 'minion', 'minion0']
 
     p = subprocess.Popen(
         args,
