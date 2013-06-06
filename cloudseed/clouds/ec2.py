@@ -100,6 +100,7 @@ def create_master(vm_=None, call=None):
     conf = {
     'ip_address': data['ipAddress'],
     'dns_name': data['dnsName'],
+    'private_ip_address': data['privateIpAddress']
     }
 
     conf_filename = os.path.join(env.current_env_path(), 'salt', 'cloudseed')

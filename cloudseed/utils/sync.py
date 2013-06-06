@@ -86,8 +86,22 @@ def _add_saltcloud_conf(manifest, cloud):
     saltcloud_conf = yaml.load(
         filesystem.read_file('cloudseed/current/salt/cloud'))
 
+    ssh_interface = cloud.opts.get('ssh_interface', 'private_ips')
+
+    interface_ips = {
+        'public_ips': cloud.opts['cloudseed'].get('ip_address', None),
+        'private_ips': cloud.opts['cloudseed'].get('private_ip_address', None)
+    }
+
+    target_ip = interface_ips.get(ssh_interface, None)
+
+    if not target_ip:
+        # TODO Better, more informative error please.
+        raise RuntimeError
+
+
     saltcloud_conf['minion'] = {
-    'master': cloud.opts['cloudseed']['ip_address']}
+    'master': target_ip}
 
     saltcloud_obj = writers.write_stringio(
         yaml.safe_dump(saltcloud_conf, default_flow_style=False))

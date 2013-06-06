@@ -81,13 +81,14 @@ common commands:
         from cloudseed.cli import sync
         sync.run(argv)
 
+    elif command == 'deploy':
+        from cloudseed.cli import deploy
+        deploy.run(argv)
+
     # elif command == 'agent':
     #     from cloudseed.cli import agent
     #     agent.run(config, argv)
 
-    # elif command == 'bootstrap':
-    #     from cloudseed.cli import bootstrap
-    #     bootstrap.run(config, argv)
 
     # elif command == 'instance':
     #     from cloudseed.cli import instance
@@ -105,16 +106,8 @@ common commands:
     #     from cloudseed.cli import destroy
     #     destroy.run(config, argv)
 
-    # elif command == 'deploy':
-    #     from cloudseed.cli import deploy
-    #     deploy.run(config, argv)
-
-    # elif command == 'sync':
-    #     from cloudseed.cli import sync
-    #     sync.run(config, argv)
-
-    # elif args['<command>'] in ('help', None):
-    #     exit(call(['cloudseed', '--help']))
+    elif args['<command>'] in ('help', None):
+        exit(call(['cloudseed', '--help']))
 
     else:
         exit('{0} is not a cloudseed command. See \'cloudseed --help\'.' \
