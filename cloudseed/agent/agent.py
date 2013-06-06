@@ -70,8 +70,8 @@ def worker():
 
 
 def saltcloud_profile(name, tag):
-    import signal
-    signal.signal(signal.SIGCHLD, signal.SIG_IGN)
+    #import signal
+    #signal.signal(signal.SIGCHLD, signal.SIG_IGN)
 
     # TODO get the data back and write the record
     # OR hook into the salt event system
