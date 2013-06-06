@@ -70,4 +70,4 @@ def saltcloud_profile(name, tag):
     # OR hook into the salt event system
     # So we get notified after the provisioning completes
     # See salt.utils.event.MasterEvent || SaltEvent
-    subprocess.call('salt-cloud', '-p', profile, tag)
+    subprocess.call('salt-cloud', '-p', name, tag)
