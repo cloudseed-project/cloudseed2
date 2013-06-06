@@ -75,6 +75,7 @@ class SaltCloudProfile(threading.Thread):
     def __init__(self, profile, tag):
         self.profile = profile
         self.tag = tag
+        threading.Thread.__init__(self)
 
     def run(self):
         out_stream = subprocess.PIPE
