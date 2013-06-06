@@ -1,4 +1,5 @@
 import os
+import sys
 import logging
 import time
 import multiprocessing
@@ -89,7 +90,7 @@ def saltcloud_profile(name, tag):
     #output.strip()
     print(output)
     print(retcode)
-    multiprocessing.current_process().terminate()
+    sys.exit(0)
     # os._exit(0)
 
     # if p.returncode not in (0, ):
