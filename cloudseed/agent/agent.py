@@ -74,22 +74,18 @@ def saltcloud_profile(name, tag):
     # See salt.utils.event.MasterEvent || SaltEvent
 
     out_stream = subprocess.PIPE
-    err_stream = subprocess.PIPE
     args = ['salt-cloud', '-p', 'minion', 'minion0']
 
     p = subprocess.Popen(
         args,
-        shell=True,
-        stdout=out_stream,
-        stderr=err_stream)
+        stdout=out_stream)
 
-    (stdout, stderr) = p.communicate()
+    output, _ = p.communicate()
+    retcode = p.poll()
 
-    stdout.strip()
-    stderr.strip()
-
-    print(stdout)
-    print(p.returncode)
+    #output.strip()
+    print(output)
+    print(retcode)
     os._exit(0)
 
     # if p.returncode not in (0, ):
