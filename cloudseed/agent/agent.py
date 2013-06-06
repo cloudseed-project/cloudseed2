@@ -1,6 +1,7 @@
 import os
 import logging
 import time
+import multiprocessing
 from multiprocessing import Process
 import subprocess
 import zmq
@@ -63,11 +64,13 @@ def worker():
                 tag = message['tag']
                 log.debug('Bootstrapping profile %s with tag %s', profile, tag)
                 p = Process(target=saltcloud_profile, args=(profile, tag))
-                p.daemon = True
                 p.start()
 
 
 def saltcloud_profile(name, tag):
+    import signal
+    signal.signal(signal.SIGCHLD, signal.SIG_IGN)
+
     # TODO get the data back and write the record
     # OR hook into the salt event system
     # So we get notified after the provisioning completes
@@ -86,7 +89,8 @@ def saltcloud_profile(name, tag):
     #output.strip()
     print(output)
     print(retcode)
-    os._exit(0)
+    multiprocessing.current_process().terminate()
+    # os._exit(0)
 
     # if p.returncode not in (0, ):
     #     return
