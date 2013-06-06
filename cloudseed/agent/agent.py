@@ -1,9 +1,7 @@
 import os
-import sys
 import logging
 import time
-import multiprocessing
-from multiprocessing import Process
+import threading
 import subprocess
 import zmq
 
@@ -64,9 +62,34 @@ def worker():
                 profile = message['profile']
                 tag = message['tag']
                 log.debug('Bootstrapping profile %s with tag %s', profile, tag)
-                p = Process(target=saltcloud_profile, args=(profile, tag))
-                p.start()
-                p.join()
+
+                #p = Process(target=saltcloud_profile, args=(profile, tag))
+                #p.start()
+                #p.join()
+
+                action = SaltCloudProfile(profile, tag)
+                action.start()
+
+
+class SaltCloudProfile(threading.Thread):
+    def __init__(self, profile, tag):
+        self.profile = profile
+        self.tag = tag
+
+    def run(self):
+        out_stream = subprocess.PIPE
+        #args = ['salt-cloud', '-p', 'minion', 'minion0']
+        args = ['ls', '/']
+
+        p = subprocess.Popen(
+        args,
+        stdout=out_stream)
+
+        output, _ = p.communicate()
+        retcode = p.poll()
+
+        print(output)
+        print(retcode)
 
 
 def saltcloud_profile(name, tag):
