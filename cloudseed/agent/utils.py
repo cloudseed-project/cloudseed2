@@ -26,13 +26,13 @@ def daemonize():
         pid = os.fork()
         if pid > 0:
             # exit first parent
-            sys.exit(0)
+            os._exit(0)
     except OSError, e:
         log.error('fork #1 failed: %d (%s)\n' % (e.errno, e.strerror))
         sys.exit(1)
 
     # decouple from parent environment
-    os.chdir("/")
+    os.chdir('/')
     os.setsid()
     os.umask(0)
 
@@ -41,11 +41,10 @@ def daemonize():
         pid = os.fork()
         if pid > 0:
             # exit from second parent
-            sys.exit(0)
+            os._exit(0)
     except OSError, e:
         log.error('fork #2 failed: %d (%s)\n' % (e.errno, e.strerror))
         sys.exit(1)
-
 
     # A normal daemonization redirects the process output to /dev/null.
     # Unfortunately when a python multiprocess is called the output is

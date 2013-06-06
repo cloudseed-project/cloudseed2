@@ -35,6 +35,7 @@ def agent_zmq_tunnel(cloud):
                 'tcp://127.0.0.1:5556',
                 '%s@%s' % (username, server),
                 keyfile=private_key,
+                paramiko=True,
                 timeout=60)
     else:
         password = config.get_config_value('password', vm_, cloud.opts)
@@ -43,6 +44,7 @@ def agent_zmq_tunnel(cloud):
                 'tcp://127.0.0.1:5556',
                 '%s@%s' % (username, server),
                 password=password,
+                paramiko=True,
                 timeout=60)
 
     return socket

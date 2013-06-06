@@ -10,6 +10,7 @@ import logging
 from docopt import docopt
 from cloudseed.utils import ssh
 from cloudseed.utils import env
+from cloudseed.agent import commands
 
 log = logging.getLogger(__name__)
 
@@ -21,10 +22,4 @@ def run(argv):
 
     # TODO ensure we have a bootstrapped master
     # bail if we don't
-
-    client = ssh.master_client(cloud)
-    ssh.sudo(client, 'salt-cloud -p %s %s' % (profile, profile))
-
-
-
-
+    commands.deploy(profile, '%s0' % profile)
