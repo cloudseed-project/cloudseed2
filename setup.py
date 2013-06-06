@@ -23,7 +23,10 @@ tests_require = ['nose']
 
 packages = [
     'cloudseed',
+    'cloudseed.agent'
     'cloudseed.cli'
+    'cloudseed.clouds'
+    'cloudseed.utils'
 ]
 
 setup(
@@ -36,9 +39,7 @@ setup(
     url='https://github.com/aventurella/cloudseed',
     license=license,
     packages=packages,
-    package_data={'': ['LICENSE'],
-                  'cloudseed.masters': ['resources/*.sh'],
-                  'cloudseed.minions': ['resources/*.sh']},
+    package_data={'': ['LICENSE']},
     include_package_data=True,
     install_requires=install_requires,
     tests_require=tests_require,

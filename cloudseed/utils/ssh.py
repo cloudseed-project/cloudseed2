@@ -2,6 +2,8 @@ import logging
 import paramiko
 from saltcloud import config
 from subprocess import call
+import zmq
+from zmq.ssh.tunnel import tunnel_connection
 
 
 log = logging.getLogger(__name__)
@@ -16,6 +18,34 @@ def run(client, command):
     action = 'sh -c "%s"' % command
     stdin, stdout, stderr = client.exec_command(action)
     return stdout.read()
+
+
+def agent_zmq_tunnel(cloud):
+    vm_ = cloud.vm_profile('master')
+    server = cloud.opts['cloudseed']['ip_address']
+    context = zmq.Context()
+    socket = context.socket(zmq.REQ)
+
+    private_key = config.get_config_value('private_key', vm_, cloud.opts)
+    username = config.get_config_value('ssh_username', vm_, cloud.opts)
+
+    if private_key:
+        tunnel_connection(
+                socket,
+                'tcp://127.0.0.1:5556',
+                '%s@%s' % (username, server),
+                keyfile=private_key,
+                timeout=60)
+    else:
+        password = config.get_config_value('password', vm_, cloud.opts)
+        tunnel_connection(
+                socket,
+                'tcp://127.0.0.1:5556',
+                '%s@%s' % (username, server),
+                password=password,
+                timeout=60)
+
+    return socket
 
 
 def sudo(client, command):

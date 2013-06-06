@@ -5,7 +5,6 @@ from saltcloud import config
 
 log = logging.getLogger(__name__)
 
-
 def master_client(cloud):
     vm_ = cloud.vm_profile('master')
     provider = cloud.provider_profile_full(vm_)
