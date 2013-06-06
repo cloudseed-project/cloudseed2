@@ -23,10 +23,10 @@ tests_require = ['nose']
 
 packages = [
     'cloudseed',
-    'cloudseed.agent'
-    'cloudseed.cli'
-    'cloudseed.clouds'
-    'cloudseed.utils'
+    'cloudseed.agent',
+    'cloudseed.cli',
+    'cloudseed.clouds',
+    'cloudseed.utils',
 ]
 
 setup(
