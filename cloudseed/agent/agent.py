@@ -66,6 +66,7 @@ def worker():
                 log.debug('Bootstrapping profile %s with tag %s', profile, tag)
                 p = Process(target=saltcloud_profile, args=(profile, tag))
                 p.start()
+                p.join()
 
 
 def saltcloud_profile(name, tag):
