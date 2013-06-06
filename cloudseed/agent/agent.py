@@ -78,7 +78,8 @@ def saltcloud_profile(name, tag):
     # See salt.utils.event.MasterEvent || SaltEvent
 
     out_stream = subprocess.PIPE
-    args = ['salt-cloud', '-p', 'minion', 'minion0']
+    #args = ['salt-cloud', '-p', 'minion', 'minion0']
+    args = ['ls', '/']
 
     p = subprocess.Popen(
         args,
