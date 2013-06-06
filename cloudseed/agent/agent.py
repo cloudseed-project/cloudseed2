@@ -79,8 +79,8 @@ class SaltCloudProfile(threading.Thread):
 
     def run(self):
         out_stream = subprocess.PIPE
-        #args = ['salt-cloud', '-p', 'minion', 'minion0']
-        args = ['ls', '/']
+        args = ['salt-cloud', '-p', 'minion', 'minion0']
+        #args = ['ls', '/']
 
         p = subprocess.Popen(
         args,
