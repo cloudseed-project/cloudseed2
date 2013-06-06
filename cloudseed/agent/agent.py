@@ -65,7 +65,6 @@ def worker():
                 tag = message['tag']
                 log.debug('Bootstrapping profile %s with tag %s', profile, tag)
                 p = Process(target=saltcloud_profile, args=(profile, tag))
-                p.daemon = True
                 p.start()
 
 
@@ -91,7 +90,7 @@ def saltcloud_profile(name, tag):
     #output.strip()
     print(output)
     print(retcode)
-    sys.exit(0)
+    # sys.exit(0)
     # os._exit(0)
 
     # if p.returncode not in (0, ):
