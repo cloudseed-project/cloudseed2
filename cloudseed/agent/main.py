@@ -11,5 +11,6 @@ def main():
     Process(name='cloudseed agent', target=agent).start()
     Process(name='cloudseed salt events', target=salt_master_events).start()
 
+
 if __name__ == '__main__':
     main()
