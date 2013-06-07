@@ -68,40 +68,20 @@ def worker():
                 action.start()
 
 
-# class SaltCloudProfile(multiprocessing.Process):
-#     def __init__(self, profile, tag):
-#         self.profile = profile
-#         self.tag = tag
-#         #self.stdout = None
-#         #self.stderr = None
-#         super(SaltCloudProfile, self).__init__()
-
-#     def run(self):
-#         out_stream = None  # subprocess.PIPE
-#         args = [
-#         'salt-cloud',
-#         '-p', self.profile.encode('utf-8'),
-#         self.tag.encode('utf-8')]
-
-#         p = subprocess.Popen(
-#         args,
-#         stdout=out_stream)
-
-#         output, _ = p.communicate()
-#         #retcode = p.poll()
-
-
-class SaltCloudProfile(threading.Thread):
+class SaltCloudProfile(multiprocessing.Process):
     def __init__(self, profile, tag):
         self.profile = profile
         self.tag = tag
-        self.stdout = None
-        self.stderr = None
+        #self.stdout = None
+        #self.stderr = None
         super(SaltCloudProfile, self).__init__()
 
     def run(self):
-        out_stream = subprocess.PIPE
-        args = ['salt-cloud', '-p', self.profile, self.tag]
+        out_stream = None  # subprocess.PIPE
+        args = [
+        'salt-cloud',
+        '-p', self.profile.encode('utf-8'),
+        self.tag.encode('utf-8')]
 
         p = subprocess.Popen(
         args,
@@ -109,3 +89,23 @@ class SaltCloudProfile(threading.Thread):
 
         output, _ = p.communicate()
         #retcode = p.poll()
+
+
+# class SaltCloudProfile(threading.Thread):
+#     def __init__(self, profile, tag):
+#         self.profile = profile
+#         self.tag = tag
+#         self.stdout = None
+#         self.stderr = None
+#         super(SaltCloudProfile, self).__init__()
+
+#     def run(self):
+#         out_stream = subprocess.PIPE
+#         args = ['salt-cloud', '-p', self.profile, self.tag]
+
+#         p = subprocess.Popen(
+#         args,
+#         stdout=out_stream)
+
+#         output, _ = p.communicate()
+#         #retcode = p.poll()
