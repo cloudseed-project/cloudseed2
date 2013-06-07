@@ -78,7 +78,10 @@ class SaltCloudProfile(multiprocessing.Process):
 
     def run(self):
         out_stream = subprocess.PIPE
-        args = ['salt-cloud', '-p', self.profile, self.tag]
+        args = [
+        'salt-cloud',
+        '-p', self.profile.encode('utf-8'),
+        self.tag.encode('utf-8')]
 
         p = subprocess.Popen(
         args,
