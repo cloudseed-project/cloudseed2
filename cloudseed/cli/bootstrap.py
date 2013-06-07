@@ -93,6 +93,7 @@ def cloudseed_parse_args(self, args=None, values=None):
     # for now the highstate on master is handeled
     # in the deploy script
     self.config['start_action'] = None
+    self.config['display_ssh_output'] = True
 
     # override the initial lookup path for modules.
     # ensure that our local clouds are searched first, if present
@@ -105,6 +106,7 @@ def cloudseed_parse_args(self, args=None, values=None):
 
     vm_profile = cloud.vm_profile('master')
     vm_profile['securitygroup'] = ['default', 'ssh']
+
 
     self.config['log_file'] = '/dev/null'
 

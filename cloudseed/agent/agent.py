@@ -77,9 +77,10 @@ class SaltCloudProfile(multiprocessing.Process):
         super(SaltCloudProfile, self).__init__()
 
     def run(self):
-        out_stream = None  # subprocess.PIPE
+        out_stream = subprocess.PIPE
         args = [
         'salt-cloud',
+        '--out', 'yaml'
         '-p', self.profile.encode('utf-8'),
         self.tag.encode('utf-8')]
 
@@ -88,6 +89,7 @@ class SaltCloudProfile(multiprocessing.Process):
         stdout=out_stream)
 
         output, _ = p.communicate()
+        print(output)
         #retcode = p.poll()
 
 

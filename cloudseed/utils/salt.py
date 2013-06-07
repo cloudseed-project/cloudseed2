@@ -95,6 +95,7 @@ def create_salt_cloud_config(prefix='', data=None):
     '''
     data = '''start_action: state.highstate
 sync_after_install: all
+display_ssh_output: False
 '''
     filename = os.path.join(prefix, 'cloud')
     write_string(filename, data)
