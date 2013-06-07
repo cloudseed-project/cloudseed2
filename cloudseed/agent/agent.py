@@ -14,22 +14,18 @@ log = logging.getLogger(__name__)
 def salt_master_events():
 
     event = salt.utils.event.MasterEvent('/var/run/salt/master')
-
+    from pprint import pprint
     for data in event.iter_events():
         print(type(data))
-        obj = json.loads(data)
 
-        if obj.get('success', False) and \
-           obj.get('_cmd', None) == '_return' and \
-           obj.get('fun', None) == 'state.highstate':
+        if not isinstance(data, dict):
+            return
 
+        pprint(data)
 
-           print(obj)
-           print(obj.get['id'])
-           print(data)
-           print(type(data))
-           print(type(obj))
-
+        if data.get('success', False) and \
+           data.get('_cmd', None) == '_return' and \
+           data.get('fun', None) == 'state.highstate':
 
 
 def agent():
