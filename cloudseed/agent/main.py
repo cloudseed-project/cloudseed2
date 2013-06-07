@@ -1,3 +1,4 @@
+import sys
 from multiprocessing import Process
 from .utils import daemonize
 from .agent import worker
@@ -9,6 +10,7 @@ def main():
     p = Process(target=_start_daemon)
     p.start()
     p.join()
+    sys.exit(0)
 
 
 def _start_daemon():
