@@ -1,4 +1,3 @@
-import sys
 from multiprocessing import Process
 from .utils import daemonize
 from .agent import worker
@@ -7,10 +6,7 @@ from .agent import salt_master_events
 
 
 def main():
-    p = Process(target=_start_daemon)
-    p.start()
-    p.join()
-    sys.exit(0)
+    _start_daemon()
 
 
 def _start_daemon():
@@ -18,6 +14,7 @@ def _start_daemon():
     Process(name='cloudseed worker', target=worker).start()
     Process(name='cloudseed agent', target=agent).start()
     Process(name='cloudseed salt events', target=salt_master_events).start()
+
 
 if __name__ == '__main__':
     main()
