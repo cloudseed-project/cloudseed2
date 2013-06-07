@@ -27,7 +27,7 @@ def salt_master_events():
         pprint(data)
 
         if data.get('success', False) and \
-           data.get('_cmd', None) == '_return' and \
+           data.get('cmd', None) == '_return' and \
            data.get('fun', None) == 'state.highstate':
 
             print(data)
