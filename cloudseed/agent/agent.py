@@ -5,9 +5,17 @@ import threading
 import multiprocessing
 import subprocess
 import zmq
-
+import salt.utils.event
 
 log = logging.getLogger(__name__)
+
+
+def salt_master_events():
+
+    event = salt.utils.event.MasterEvent('/var/run/salt/master')
+
+    for data in event.iter_events():
+        print(data)
 
 
 def agent():
@@ -77,19 +85,17 @@ class SaltCloudProfile(multiprocessing.Process):
         super(SaltCloudProfile, self).__init__()
 
     def run(self):
-        out_stream = subprocess.PIPE
         args = [
         'salt-cloud',
-        '--out', 'yaml',
-        '-p', self.profile.encode('utf-8'),
-        self.tag.encode('utf-8')]
+        '-p', self.profile,
+        self.tag]
 
         p = subprocess.Popen(
-        args,
-        stdout=out_stream)
+        args)
 
-        output, _ = p.communicate()
-        print(output)
+        #output, _ = p.communicate()
+        #print(output)
+        p.wait()
         #retcode = p.poll()
 
 
