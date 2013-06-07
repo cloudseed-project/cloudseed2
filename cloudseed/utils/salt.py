@@ -5,6 +5,12 @@ from .writers import write_string
 from .filesystem import mkdirs
 
 
+def master_salt_call_highstate():
+    cloud = env.cloud()
+    client = ssh.master_client(cloud)
+    ssh.sudo(client, 'salt-call state.highstate')
+
+
 def highstate(minion_id=None, grain=None):
 
     cloud = env.cloud()

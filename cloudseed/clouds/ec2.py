@@ -109,7 +109,7 @@ def create_master(vm_=None, call=None):
         f.write(yaml.safe_dump(conf, default_flow_style=False))
 
     sync.sync_full()
-    # salt.highstate(minion_id='master')
+    salt.master_salt_call_highstate()
 
     return data
 
