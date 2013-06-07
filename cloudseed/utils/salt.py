@@ -94,6 +94,7 @@ def create_salt_cloud_config(prefix='', data=None):
     so we opt for a pretty formatted string
     '''
     data = '''start_action: state.highstate
+sync_after_install: all
 '''
     filename = os.path.join(prefix, 'cloud')
     write_string(filename, data)

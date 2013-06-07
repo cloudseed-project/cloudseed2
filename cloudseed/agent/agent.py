@@ -2,6 +2,7 @@ import os
 import logging
 import time
 import threading
+import multiprocessing
 import subprocess
 import zmq
 
@@ -63,24 +64,21 @@ def worker():
                 tag = message['tag']
                 log.debug('Bootstrapping profile %s with tag %s', profile, tag)
 
-                #p = Process(target=saltcloud_profile, args=(profile, tag))
-                #p.start()
-                #p.join()
-
                 action = SaltCloudProfile(profile, tag)
                 action.start()
 
 
-class SaltCloudProfile(threading.Thread):
+class SaltCloudProfile(multiprocessing.Process):
     def __init__(self, profile, tag):
         self.profile = profile
         self.tag = tag
+        self.stdout = None
+        self.stderr = None
         threading.Thread.__init__(self)
 
     def run(self):
         out_stream = subprocess.PIPE
-        args = ['salt-cloud', '-p', 'minion', 'minion0']
-        #args = ['ls', '/']
+        args = ['salt-cloud', '-p', self.profile, self.tag]
 
         p = subprocess.Popen(
         args,
@@ -89,37 +87,22 @@ class SaltCloudProfile(threading.Thread):
         output, _ = p.communicate()
         retcode = p.poll()
 
-        print(output)
-        print(retcode)
 
+# class SaltCloudProfile(threading.Thread):
+#     def __init__(self, profile, tag):
+#         self.profile = profile
+#         self.tag = tag
+#         self.stdout = None
+#         self.stderr = None
+#         threading.Thread.__init__(self)
 
-def saltcloud_profile(name, tag):
-    #import signal
-    #signal.signal(signal.SIGCHLD, signal.SIG_IGN)
+#     def run(self):
+#         out_stream = subprocess.PIPE
+#         args = ['salt-cloud', '-p', self.profile, self.tag]
 
-    # TODO get the data back and write the record
-    # OR hook into the salt event system
-    # So we get notified after the provisioning completes
-    # See salt.utils.event.MasterEvent || SaltEvent
+#         p = subprocess.Popen(
+#         args,
+#         stdout=out_stream)
 
-    out_stream = subprocess.PIPE
-    #args = ['salt-cloud', '-p', 'minion', 'minion0']
-    args = ['ls', '/']
-
-    p = subprocess.Popen(
-        args,
-        stdout=out_stream)
-
-    output, _ = p.communicate()
-    retcode = p.poll()
-
-    #output.strip()
-    print(output)
-    print(retcode)
-    # sys.exit(0)
-    # os._exit(0)
-
-    # if p.returncode not in (0, ):
-    #     return
-    # subprocess.call(['salt-cloud', '-p', name, tag])
-
+#         output, _ = p.communicate()
+#         retcode = p.poll()
