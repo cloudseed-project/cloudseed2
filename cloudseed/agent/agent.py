@@ -15,11 +15,12 @@ def salt_master_events():
     event = salt.utils.event.MasterEvent('/var/run/salt/master')
 
     for data in event.iter_events():
-        'success': True, 'cmd': '_return', 'fun': 'state.highstate', 'id': 'minion0', 'out': 'highstate'}
         if data.get('success', False) and \
            data.get('_cmd', None) == '_return' and \
            data.get('fun', None) == 'state.highstate':
 
+
+           print(data)
            print(data.get['id'])
 
 
