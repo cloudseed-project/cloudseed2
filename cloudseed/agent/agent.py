@@ -17,22 +17,16 @@ def salt_master_events():
     from pprint import pprint
 
     for data in event.iter_events():
-        pprint(data)
-        print(type(data))
 
         if not isinstance(data, dict):
             print(data)
             return
 
-        pprint(data)
-
         if data.get('success', False) and \
            data.get('cmd', None) == '_return' and \
            data.get('fun', None) == 'state.highstate':
 
-            print(data)
-        else:
-            print('NOT A HIGH STATE')
+            pprint(data)
 
 
 def agent():
