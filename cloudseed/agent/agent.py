@@ -15,6 +15,7 @@ def salt_master_events():
 
     event = salt.utils.event.MasterEvent('/var/run/salt/master')
     from pprint import pprint
+
     for data in event.iter_events():
         print(type(data))
 
@@ -26,6 +27,8 @@ def salt_master_events():
         if data.get('success', False) and \
            data.get('_cmd', None) == '_return' and \
            data.get('fun', None) == 'state.highstate':
+
+            print(data)
 
 
 def agent():
