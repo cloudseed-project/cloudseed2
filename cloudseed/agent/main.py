@@ -6,10 +6,10 @@ from .agent import salt_master_events
 
 
 def main():
-    daemonize()
     Process(name='cloudseed worker', target=worker).start()
     Process(name='cloudseed agent', target=agent).start()
     Process(name='cloudseed salt events', target=salt_master_events).start()
+    daemonize()
 
 
 if __name__ == '__main__':
