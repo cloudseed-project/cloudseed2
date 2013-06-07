@@ -80,7 +80,7 @@ class SaltCloudProfile(multiprocessing.Process):
         out_stream = subprocess.PIPE
         args = [
         'salt-cloud',
-        '--out', 'yaml'
+        '--out', 'yaml',
         '-p', self.profile.encode('utf-8'),
         self.tag.encode('utf-8')]
 
