@@ -72,8 +72,8 @@ class SaltCloudProfile(multiprocessing.Process):
     def __init__(self, profile, tag):
         self.profile = profile
         self.tag = tag
-        self.stdout = None
-        self.stderr = None
+        #self.stdout = None
+        #self.stderr = None
         threading.Thread.__init__(self)
 
     def run(self):
