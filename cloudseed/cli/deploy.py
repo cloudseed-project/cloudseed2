@@ -18,7 +18,7 @@ log = logging.getLogger(__name__)
 def run(argv):
     args = docopt(__doc__, argv=argv)
     cloud = env.cloud()
-    profile = args['<profile>']
+    profile = args['<profile>'][0]
 
     # TODO ensure we have a bootstrapped master
     # bail if we don't
