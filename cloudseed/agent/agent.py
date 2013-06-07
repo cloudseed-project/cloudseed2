@@ -74,7 +74,7 @@ class SaltCloudProfile(multiprocessing.Process):
         self.tag = tag
         #self.stdout = None
         #self.stderr = None
-        threading.Thread.__init__(self)
+        super(SaltCloudProfile, self).__init__()
 
     def run(self):
         out_stream = subprocess.PIPE
@@ -94,7 +94,7 @@ class SaltCloudProfile(multiprocessing.Process):
 #         self.tag = tag
 #         self.stdout = None
 #         self.stderr = None
-#         threading.Thread.__init__(self)
+#         super(SaltCloudProfile, self).__init__()
 
 #     def run(self):
 #         out_stream = subprocess.PIPE
