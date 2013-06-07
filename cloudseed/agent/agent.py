@@ -1,6 +1,7 @@
 import os
 import logging
 import time
+import json
 import threading
 import multiprocessing
 import subprocess
@@ -15,13 +16,19 @@ def salt_master_events():
     event = salt.utils.event.MasterEvent('/var/run/salt/master')
 
     for data in event.iter_events():
-        if data.get('success', False) and \
-           data.get('_cmd', None) == '_return' and \
-           data.get('fun', None) == 'state.highstate':
+        print(type(data))
+        obj = json.loads(data)
+
+        if obj.get('success', False) and \
+           obj.get('_cmd', None) == '_return' and \
+           obj.get('fun', None) == 'state.highstate':
 
 
+           print(obj)
+           print(obj.get['id'])
            print(data)
-           print(data.get['id'])
+           print(type(data))
+           print(type(obj))
 
 
 
