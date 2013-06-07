@@ -31,6 +31,8 @@ def salt_master_events():
            data.get('fun', None) == 'state.highstate':
 
             print(data)
+        else:
+            print('NOT A HIGH STATE')
 
 
 def agent():
