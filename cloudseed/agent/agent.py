@@ -20,6 +20,7 @@ def salt_master_events():
         print(type(data))
 
         if not isinstance(data, dict):
+            print(data)
             return
 
         pprint(data)
