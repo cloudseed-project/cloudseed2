@@ -1,9 +1,10 @@
+from __future__ import absolute_import
 import logging
 import paramiko
 from saltcloud import config
 
-
 log = logging.getLogger(__name__)
+
 
 def master_client(cloud):
     vm_ = cloud.vm_profile('master')

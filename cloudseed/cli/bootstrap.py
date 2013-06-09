@@ -15,19 +15,25 @@ import saltcloud.cloud
 import cloudseed
 from cloudseed.utils import filesystem
 from cloudseed.utils import env
+from cloudseed.utils import saltcloud as cs_saltcloud
 import cloudseed.cloud
 
 
-saltcloud_parse_args = saltcloud.cli.SaltCloud.parse_args
+# saltcloud_parse_args = saltcloud.cli.SaltCloud.parse_args
 # saltcloud_create = saltcloud.cloud.Cloud.create
-cloud = None
+#cloud = None
 
 
 def run(argv):
-    saltcloud.cli.SaltCloud.parse_args = cloudseed_parse_args
-    # saltcloud.cloud.Cloud.create = cloudseed_create
-    cloud = saltcloud.cli.SaltCloud()
-    cloud.run()
+    cs_saltcloud.bootstrap_master()
+    # return
+
+    # saltcloud.cli.SaltCloud.parse_args = cloudseed_parse_args
+    # # saltcloud.cloud.Cloud.create = cloudseed_create
+    # cloud = saltcloud.cli.SaltCloud()
+    # cloud.run()
+
+
 
 
 def cloudseed_create(self, vm_):

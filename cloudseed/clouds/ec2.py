@@ -77,8 +77,11 @@ def create(vm_=None, call=None):
     if vm_['profile'] == 'master':
         return create_master(vm_, call)
 
-    return saltcloud_ec2_create(vm_)
+    return create_minion(vm_, call)
 
+
+def create_minion(vm_, call=None):
+    return saltcloud_ec2_create(vm_)
 
 def create_master(vm_=None, call=None):
     cloud = cloudseed.cloud.Cloud(__opts__)
