@@ -18,8 +18,7 @@ pip install gitpython salt-cloud apache-libcloud pymongo
 # debugging purposes:
 # this will be a pip install
 # must start before the master comes online
-cd ~; git clone https://github.com/cloudseed-project/cloudseed2.git; cd cloudseed2; python setup.py develop;
-cloudseed agent
+sudo sh -c "cd ~; git clone https://github.com/cloudseed-project/cloudseed2.git cloudseed; cd cloudseed; python setup.py develop; cloudseed agent"
 
 apt-get install -y -o DPkg::Options::=--force-confold salt-master
 salt-key --gen-keys=master
