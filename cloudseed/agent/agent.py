@@ -8,6 +8,7 @@ import subprocess
 import zmq
 import salt.utils.event
 from cloudseed.utils import saltcloud as cs_saltcloud
+from cloudseed.utils import events as cs_events
 
 log = logging.getLogger(__name__)
 
@@ -84,6 +85,7 @@ def worker():
             log.debug('Worker received message %s', message)
 
             action = message.get('action', None)
+
             if action == 'profile':
                 # depending on how many actions come in
                 # we may need to build in a way to limit the
@@ -92,3 +94,7 @@ def worker():
                 tag = message['tag']
                 log.debug('Bootstrapping profile %s with tag %s', profile, tag)
                 cs_saltcloud.execute_profile(profile, tag)
+
+            elif action == 'event':
+                tag = message.get('tag', 'cloudseed')
+                cs_events.fire_event(message['data'], tag=tag)

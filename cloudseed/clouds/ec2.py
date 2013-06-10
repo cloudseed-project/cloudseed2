@@ -9,6 +9,7 @@ from cloudseed.utils import env
 from cloudseed.utils import sync
 from cloudseed.utils import salt
 from cloudseed.utils import events
+import cloudseed.agent.commands
 
 
 log = logging.getLogger(__name__)
@@ -92,6 +93,13 @@ def create_minion(vm_, call=None):
     'private_ip_address': data['privateIpAddress']
     }
 
+    event = {
+    'fun': 'create.minion',
+    'return': data
+    }
+
+    # assumes being run on the master
+    events.fire_event(event)
     return data
 
 
@@ -129,10 +137,13 @@ def create_master(vm_=None, call=None):
     sync.sync_full()
     salt.master_salt_call_highstate()
 
-    event = events.CloudseedTCPEvent(node='cloudseed')
-    event.fire_event(
-                '**** CLOUDSEED MASTER **** %s' % data, 'cloudseed'
-    )
+    event = {
+    'fun': 'create.master',
+    'return': data
+    }
+
+    # assumes being run locally
+    cloudseed.agent.commands.fire_event(event)
 
     return data
 

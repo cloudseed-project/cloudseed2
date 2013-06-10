@@ -7,6 +7,11 @@ from cloudseed.compat import urlparse
 from cloudseed.utils import env
 
 
+def fire_event(data, tag=None):
+    event = SaltEvent('master', '/var/run/salt/master')
+    event.fire(data, tag)
+
+
 class CloudseedTCPEvent(SaltEvent):
     def __init__(self, node, sock_dir=None, **kwargs):
         kwargs['ipc_mode'] = 'tcp'

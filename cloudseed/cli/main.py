@@ -65,6 +65,11 @@ common commands:
     #     profile_config=profile_config,
     #     provider_config=provider_config))
 
+    if command == 'push':
+        from cloudseed.cli import push
+        push.run(argv)
+        return
+
     if command == 'init':
         from cloudseed.cli import initialize
         initialize.run(argv)

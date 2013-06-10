@@ -7,5 +7,5 @@ def deploy(profile, tag):
 
 
 @master_tunnel
-def add_machine(tag, data):
-    return {'action': 'add_machine', 'tag': tag, 'data': data}
+def fire_event(data):
+    return {'action': 'event', 'data': data}
