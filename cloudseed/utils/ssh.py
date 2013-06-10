@@ -21,29 +21,25 @@ def run(client, command):
     return stdout.read()
 
 
-def agent_zmq_tunnel(cloud):
-    vm_ = cloud.vm_profile('master')
-    server = cloud.opts['cloudseed']['ip_address']
+def agent_zmq_tunnel(cloud, host, username,
+                     private_key=None, password=None):
+
     context = zmq.Context()
     socket = context.socket(zmq.REQ)
-
-    private_key = config.get_config_value('private_key', vm_, cloud.opts)
-    username = config.get_config_value('ssh_username', vm_, cloud.opts)
 
     if private_key:
         tunnel_connection(
                 socket,
                 'tcp://127.0.0.1:5556',
-                '%s@%s' % (username, server),
+                '%s@%s' % (username, host),
                 keyfile=private_key,
                 paramiko=True,
                 timeout=60)
     else:
-        password = config.get_config_value('password', vm_, cloud.opts)
         tunnel_connection(
                 socket,
                 'tcp://127.0.0.1:5556',
-                '%s@%s' % (username, server),
+                '%s@%s' % (username, host),
                 password=password,
                 paramiko=True,
                 timeout=60)

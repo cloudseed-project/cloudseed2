@@ -81,9 +81,23 @@ def create(vm_=None, call=None):
 
 
 def create_minion(vm_, call=None):
-    return saltcloud_ec2_create(vm_)
+    # always assumes the master has been created
+    # and that we are running on it.
+    data = saltcloud_ec2_create(vm_)
+
+    conf = {
+    'ip_address': data['ipAddress'],
+    'dns_name': data['dnsName'],
+    'private_ip_address': data['privateIpAddress']
+    }
+
+    return data
+
 
 def create_master(vm_=None, call=None):
+    # always assumes we are running locally, creating a
+    # master for the 1st time
+
     cloud = cloudseed.cloud.Cloud(__opts__)
     bootstrap_master(cloud)
 

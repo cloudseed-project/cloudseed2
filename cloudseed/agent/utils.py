@@ -1,6 +1,7 @@
 import os
 import sys
 import logging
+from saltcloud import config
 from cloudseed.utils import env
 from cloudseed.utils import ssh
 
@@ -10,7 +11,19 @@ log = logging.getLogger(__name__)
 def master_tunnel(fun):
     def action(*args, **kwargs):
         cloud = env.cloud()
-        socket = ssh.agent_zmq_tunnel(cloud)
+        vm_ = cloud.vm_profile('master')
+        ip_address = cloud.opts['cloudseed']['ip_address']
+
+        private_key = config.get_config_value('private_key', vm_, cloud.opts)
+        username = config.get_config_value('ssh_username', vm_, cloud.opts)
+        password = config.get_config_value('password', vm_, cloud.opts)
+
+        socket = ssh.agent_zmq_tunnel(
+            host=ip_address,
+            private_key=private_key,
+            username=username,
+            password=password)
+
         socket.send_json(fun(*args, **kwargs))
     return action
 
