@@ -21,7 +21,7 @@ def run(client, command):
     return stdout.read()
 
 
-def agent_zmq_tunnel(host, username, port,
+def agent_zmq_tunnel(host, username, port, socket_type,
                      private_key=None, password=None):
 
     context = zmq.Context()

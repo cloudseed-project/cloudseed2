@@ -1,6 +1,7 @@
 import os
 import sys
 import logging
+import zmq
 from saltcloud import config
 from cloudseed.utils import env
 from cloudseed.utils import ssh
@@ -19,6 +20,7 @@ def master_tunnel(fun):
         password = config.get_config_value('password', vm_, cloud.opts)
 
         socket = ssh.agent_zmq_tunnel(
+            socket_type=zmq.REQ,
             host=ip_address,
             port='5556',
             private_key=private_key,

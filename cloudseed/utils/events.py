@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+import zmq
 from saltcloud import config
 from salt.utils.event import SaltEvent
 from cloudseed.utils import ssh
@@ -29,6 +30,7 @@ class CloudseedTCPEvent(SaltEvent):
         password = config.get_config_value('password', vm_, cloud.opts)
 
         self.push = ssh.agent_zmq_tunnel(
+            socket_type=zmq.PUSH,
             host=ip_address,
             port=port,
             private_key=private_key,
