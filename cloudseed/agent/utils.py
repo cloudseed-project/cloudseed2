@@ -20,6 +20,7 @@ def master_tunnel(fun):
 
         socket = ssh.agent_zmq_tunnel(
             host=ip_address,
+            port='5556',
             private_key=private_key,
             username=username,
             password=password)

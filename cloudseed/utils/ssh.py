@@ -21,7 +21,7 @@ def run(client, command):
     return stdout.read()
 
 
-def agent_zmq_tunnel(cloud, host, username,
+def agent_zmq_tunnel(cloud, host, username, port,
                      private_key=None, password=None):
 
     context = zmq.Context()
@@ -30,7 +30,7 @@ def agent_zmq_tunnel(cloud, host, username,
     if private_key:
         tunnel_connection(
                 socket,
-                'tcp://127.0.0.1:5556',
+                'tcp://127.0.0.1:%s' % port,
                 '%s@%s' % (username, host),
                 keyfile=private_key,
                 paramiko=True,
@@ -38,7 +38,7 @@ def agent_zmq_tunnel(cloud, host, username,
     else:
         tunnel_connection(
                 socket,
-                'tcp://127.0.0.1:5556',
+                'tcp://127.0.0.1:%s' % port,
                 '%s@%s' % (username, host),
                 password=password,
                 paramiko=True,

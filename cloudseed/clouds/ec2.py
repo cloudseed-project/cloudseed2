@@ -8,6 +8,7 @@ from cloudseed.utils import writers
 from cloudseed.utils import env
 from cloudseed.utils import sync
 from cloudseed.utils import salt
+from cloudseed.utils import events
 
 
 log = logging.getLogger(__name__)
@@ -127,6 +128,11 @@ def create_master(vm_=None, call=None):
 
     sync.sync_full()
     salt.master_salt_call_highstate()
+
+    event = events.CloudseedMasterTCPEvent()
+    event.fire_event(
+                '**** CLOUDSEED MASTER **** %s' % data, 'cloudseed'
+    )
 
     return data
 

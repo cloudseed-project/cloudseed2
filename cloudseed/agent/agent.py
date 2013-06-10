@@ -21,9 +21,11 @@ def salt_master_events():
     log_target = logging.FileHandler('/tmp/cloudseed_events.log')
     log.addHandler(log_target)
     log.debug('Starting Cloudseed Reactor')
+
     for data in event.iter_events():
 
         pprint(data)
+        log.debug('%s', data)
 
         if not isinstance(data, dict):
             print(data)
