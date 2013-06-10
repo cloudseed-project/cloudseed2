@@ -12,15 +12,15 @@ echo deb http://ppa.launchpad.net/saltstack/salt/ubuntu `lsb_release -sc` main |
 wget -q -O- "http://keyserver.ubuntu.com:11371/pks/lookup?op=get&search=0x4759FA960E27C0A6" | apt-key add -
 
 apt-get update
-apt-get install -y git python-pip mongodb
+apt-get install -y git python-develop python-pip mongodb
 pip install gitpython salt-cloud apache-libcloud pymongo
+apt-get install -y -o DPkg::Options::=--force-confold salt-master
 
 # debugging purposes:
 # this will be a pip install
 # must start before the master comes online
 sudo sh -c "git clone https://github.com/cloudseed-project/cloudseed2.git ~/cloudseed; cd ~/cloudseed && python setup.py develop; cloudseed agent"
 
-apt-get install -y -o DPkg::Options::=--force-confold salt-master
 salt-key --gen-keys=master
 cp master.pub /etc/salt/pki/master/minions/master
 mkdir -p /etc/salt/pki/minion
