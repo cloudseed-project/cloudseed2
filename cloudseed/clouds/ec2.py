@@ -129,7 +129,7 @@ def create_master(vm_=None, call=None):
     sync.sync_full()
     salt.master_salt_call_highstate()
 
-    event = events.CloudseedMasterTCPEvent()
+    event = events.CloudseedTCPEvent(node='cloudseed')
     event.fire_event(
                 '**** CLOUDSEED MASTER **** %s' % data, 'cloudseed'
     )

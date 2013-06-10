@@ -6,10 +6,10 @@ from cloudseed.compat import urlparse
 from cloudseed.utils import env
 
 
-class CloudseedMasterTCPEvent(SaltEvent):
+class CloudseedTCPEvent(SaltEvent):
     def __init__(self, node, sock_dir=None, **kwargs):
         kwargs['ipc_mode'] = 'tcp'
-        super(CloudseedMasterTCPEvent, self).__init__(node, sock_dir, **kwargs)
+        super(CloudseedTCPEvent, self).__init__(node, sock_dir, **kwargs)
 
     def connect_pull(self):
         '''
