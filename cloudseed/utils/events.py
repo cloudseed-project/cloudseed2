@@ -20,14 +20,16 @@ class CloudseedTCPEvent(SaltEvent):
         host, port = url.netloc.split(':')
 
         cloud = env.cloud()
+
         vm_ = cloud.vm_profile('master')
 
+        ip_address = cloud.opts['cloudseed']['ip_address']
         private_key = config.get_config_value('private_key', vm_, cloud.opts)
         username = config.get_config_value('ssh_username', vm_, cloud.opts)
         password = config.get_config_value('password', vm_, cloud.opts)
 
         self.push = ssh.agent_zmq_tunnel(
-            host=host,
+            host=ip_address,
             port=port,
             private_key=private_key,
             username=username,
