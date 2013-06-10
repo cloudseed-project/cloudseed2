@@ -6,9 +6,12 @@ from .filesystem import mkdirs
 
 
 def master_salt_call_highstate():
-    cloud = env.cloud()
-    client = ssh.master_client(cloud)
-    ssh.sudo(client, 'salt-call state.highstate')
+    # cloud = env.cloud()
+    # client = ssh.master_client(cloud)
+    # #ssh.sudo(client, 'salt-call state.highstate')
+    # # we want the events, salt-call does not trigger the master events
+    # ssh.sudo(client, 'salt \'master\' state.highstate')
+    highstate('master')
 
 
 def highstate(minion_id=None, grain=None):

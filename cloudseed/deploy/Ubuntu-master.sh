@@ -12,7 +12,7 @@ echo deb http://ppa.launchpad.net/saltstack/salt/ubuntu `lsb_release -sc` main |
 wget -q -O- "http://keyserver.ubuntu.com:11371/pks/lookup?op=get&search=0x4759FA960E27C0A6" | apt-key add -
 
 apt-get update
-apt-get install -y git python-develop python-pip mongodb
+apt-get install -y git python-dev python-pip mongodb libzmq-dev
 pip install gitpython salt-cloud apache-libcloud pymongo
 apt-get install -y -o DPkg::Options::=--force-confold salt-master
 
