@@ -105,4 +105,7 @@ def worker():
                 tag = message.get('tag', 'cloudseed')
                 data = message.get('data', {})
                 log.debug('Dispatching event %s with tag %s', data, tag)
-                cs_events.fire_event(data, tag=tag)
+                try:
+                    cs_events.fire_event(data, tag=tag)
+                except Exception as e:
+                    log.exception(e)
