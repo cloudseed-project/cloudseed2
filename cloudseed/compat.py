@@ -9,8 +9,10 @@ if is_py2:
     string_type = basestring
     iterkeys = dict.iterkeys
     from urlparse import urlparse
+    from urllib import quote as urlquote
 
 elif is_py3:
     from io import StringIO
     from urllib.parse import urlparse
+    from urllib.parse import quote as urlquote
     string_type = str

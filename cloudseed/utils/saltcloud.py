@@ -44,10 +44,9 @@ class SaltCloudProfile(multiprocessing.Process):
             os.path.dirname(cloudseed.__file__))
 
         # load ours
-        cloud = cloudseed.cloud.Cloud(self.config)
-
-        vm_profile = cloud.vm_profile('master')
-        vm_profile['securitygroup'] = ['default', 'ssh']
+        #cloud = cloudseed.cloud.Cloud(self.config)
+        #vm_profile = cloud.vm_profile('master')
+        #vm_profile['securitygroup'] = ['default', 'ssh']
 
         self.config['log_file'] = '/dev/null'
 

@@ -3,6 +3,7 @@ import yaml
 from saltcloud.clouds.ec2 import *
 import saltcloud.config as config
 import cloudseed.cloud
+from cloudseed.compat import urlquote
 from cloudseed.utils import filesystem
 from cloudseed.utils import writers
 from cloudseed.utils import env
@@ -109,7 +110,6 @@ def create_minion(vm_, call=None):
 def create_master(vm_=None, call=None):
     # always assumes we are running locally, creating a
     # master for the 1st time
-
     cloud = cloudseed.cloud.Cloud(__opts__)
     bootstrap_master(cloud)
 
@@ -175,9 +175,6 @@ def bootstrap_master(cloud):
 
     provider['ssh_interface'] = 'public_ips'
 
-    #application_group = security_group_name()
-    #provider['securitygroup'] = ['ssh', 'default', ' bigMETHOD-Worker']
-
     if not provider.get('keyname', False):
         keyname = '%s-%s' % (env.location_name(), env.env_name())
 
@@ -204,11 +201,35 @@ def bootstrap_master(cloud):
             new_path = os.path.abspath(provider['private_key'])
             provider['private_key'] = new_path
 
+    # perhaps run though saltcloud's config look up system?
+    # see if the security group is defined on the profile
+    # or just assume with cloudseed we are looking for the
+    # provider only at this stage.
+    if not provider.get('securitygroup', False):
+        app, ssh = initial_security_groups()
 
-    #securitygroup:
-  #  - default
-  #  - ssh
+        app_id = create_securitygroup(
+            name=app,
+            description='CloudseedApp')
 
+        ssh_id = create_securitygroup(
+            name=ssh,
+            description='CloudseedAppSSH')
+
+        if app_id:
+            authorize_ssh_public(ssh_id)
+
+        if ssh_id:
+            authorize_all_intragroup(app_id)
+
+        vm_['securitygroup'] = [app, ssh]
+
+
+def initial_security_groups():
+    app_group = security_group_name()
+    ssh_group = security_group_name('ssh')
+
+    return app_group, ssh_group
 
 
 def security_group_name(name=None):
@@ -239,6 +260,93 @@ def bootstrap_create_keypair(keyname, filename):
     os.chmod(filename, 0600)
 
 
-def create_securitygroup(name):
-    pass
+def create_securitygroup(name, description):
 
+    params = {'Action': 'CreateSecurityGroup'}
+    params['GroupName'] = name
+
+    # AWS doesn't like the + encoded space or something.
+    # need to figure that out later what's going on there.
+    params['GroupDescription'] = description
+
+    location = get_location()
+    result = query(params, location=location, return_root=True)
+
+    if 'error' in result:
+        code = result['error']['Errors']['Error']['Code']
+        if code != 'InvalidGroup.Duplicate':
+            log.error(result)
+            return None
+    else:
+
+        group_id = next(v for each in result
+                        for k, v in each.iteritems()
+                        if k == 'groupId')
+
+        return group_id
+
+
+def authorize_all_intragroup(group_id):
+    authorize_icmp_intragroup(group_id)
+    authorize_udp_intragroup(group_id)
+    authorize_tcp_intragroup(group_id)
+
+
+def authorize_ssh_public(group_id):
+    authorize_securitygroup(
+        group_id,
+        cidr_ip='0.0.0.0/0',
+        ip_protocol='tcp',
+        from_port=22,
+        to_port=22)
+
+
+def authorize_icmp_intragroup(group_id):
+    authorize_securitygroup(
+        group_id,
+        src_group=group_id,
+        ip_protocol='icmp',
+        from_port=-1,
+        to_port=-1)
+
+
+def authorize_udp_intragroup(group_id):
+    authorize_securitygroup(
+        group_id,
+        src_group=group_id,
+        ip_protocol='udp',
+        from_port=1,
+        to_port=65535)
+
+
+def authorize_tcp_intragroup(group_id):
+    authorize_securitygroup(
+        group_id,
+        src_group=group_id,
+        ip_protocol='tcp',
+        from_port=1,
+        to_port=65535)
+
+
+def authorize_securitygroup(group_id, ip_protocol, from_port, to_port,
+                            src_group=None, cidr_ip=None):
+
+    params = {'Action': 'AuthorizeSecurityGroupIngress'}
+    params['GroupId'] = group_id
+    params['IpPermissions.1.IpProtocol'] = ip_protocol
+    params['IpPermissions.1.FromPort'] = from_port
+    params['IpPermissions.1.ToPort'] = to_port
+
+    if src_group:
+        params['IpPermissions.1.Groups.1.GroupId'] = src_group
+    elif cidr_ip:
+        params['IpPermissions.1.IpRanges.1.CidrIp'] = cidr_ip
+
+    location = get_location()
+    result = query(params, location=location, return_root=True)
+
+    if 'error' in result:
+        code = result['error']['Errors']['Error']['Code']
+        if code != 'InvalidGroup.Duplicate':
+            log.error(result)
+            return None
