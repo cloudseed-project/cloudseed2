@@ -90,6 +90,10 @@ common commands:
         from cloudseed.cli import deploy
         deploy.run(argv)
 
+    elif command == 'status':
+        from cloudseed.cli import status
+        status.run(argv)
+
     elif command == 'agent':
         from cloudseed.cli import agent
         agent.run(argv)
