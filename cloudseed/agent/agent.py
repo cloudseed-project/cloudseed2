@@ -1,45 +1,37 @@
-import os
 import logging
 import time
-import json
-import threading
-import multiprocessing
-import subprocess
 import zmq
 import salt.utils.event
-from cloudseed.utils import saltcloud as cs_saltcloud
-from cloudseed.utils import events as cs_events
-
-log = logging.getLogger(__name__)
+import cloudseed.agent.actions
 
 
 def salt_master_events():
 
     event = salt.utils.event.MasterEvent('/var/run/salt/master')
-    from pprint import pprint
 
     log = logging.getLogger('cloudseed_events')
     log_target = logging.FileHandler('/tmp/cloudseed_events.log')
     log.addHandler(log_target)
     log.debug('Starting Cloudseed Reactor')
 
-    for data in event.iter_events():
-
-        pprint(data)
+    for data in event.iter_events(tag='cloudseed'):
         log.debug('%s', data)
 
-        if not isinstance(data, dict):
-            print(data)
-            return
+        action = data.get('fun', None)
 
-        if data.get('success', False) and \
-           data.get('cmd', None) == '_return' and \
-           data.get('fun', None) == 'state.highstate':
-
-            log.debug('%s', data)
+        if action in ('create.master', 'create.minion'):
+            index = {
+            'create.master': cloudseed.agent.actions.register_master,
+            'create.minion': cloudseed.agent.actions.register_minion}
+            index.get(action)(data)
 
 
 def agent():
+    log = logging.getLogger('cloudseed_agent')
+    log_target = logging.FileHandler('/tmp/cloudseed_agent.log')
+    log.addHandler(log_target)
+    log.debug('Starting Cloudseed Agent')
+
     context = zmq.Context()
 
     external = context.socket(zmq.REP)
@@ -51,19 +43,35 @@ def agent():
     poller = zmq.Poller()
     poller.register(external, zmq.POLLIN)
 
+    # let it all get warmed up
     time.sleep(1)
 
-    log.debug('Agent Started')
+    log.debug('Cloudseed Agent Started')
 
     while True:
         socks = dict(poller.poll())
 
         if socks.get(external) == zmq.POLLIN:
             message = external.recv_json()
-            log.debug('agent received command')
-            agent.send_json(message)
-            log.debug('agent sending ack')
-            external.send_json({'ok': True})
+
+            action = message.get('action', None)
+            log.debug('Cloudseed agent received command %s', action)
+
+            ret = {'ok': True}
+
+            if action == 'profile':
+                agent.send_json(message)
+
+            elif action == 'event':
+                tag = message.get('tag', 'cloudseed')
+                data = message.get('data', {})
+                cloudseed.agent.actions.dispatch_event(data, tag)
+
+            elif action == 'status':
+                ret['data'] = cloudseed.agent.actions.status()
+
+            log.debug('Cloudseed agent sending ack %s', ret)
+            external.send_json(ret)
 
 
 def worker():
@@ -93,19 +101,7 @@ def worker():
             action = message.get('action', None)
             log.debug('Received action %s', action)
             if action == 'profile':
-                # depending on how many actions come in
-                # we may need to build in a way to limit the
-                # number of processes we spawn.
                 profile = message['profile']
                 tag = message['tag']
-                log.debug('Bootstrapping profile %s with tag %s', profile, tag)
-                cs_saltcloud.execute_profile(profile, tag)
 
-            elif action == 'event':
-                tag = message.get('tag', 'cloudseed')
-                data = message.get('data', {})
-                log.debug('Dispatching event %s with tag %s', data, tag)
-                try:
-                    cs_events.fire_event(data, tag=tag)
-                except Exception as e:
-                    log.exception(e)
+                cloudseed.agent.actions.execute_profile(profile, tag)

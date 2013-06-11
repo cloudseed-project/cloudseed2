@@ -9,3 +9,8 @@ def deploy(profile, tag):
 @master_tunnel
 def fire_event(data):
     return {'action': 'event', 'data': data}
+
+
+@master_tunnel
+def status():
+    return {'action': 'status'}

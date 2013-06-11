@@ -39,10 +39,9 @@ class MongoResource(object):
         self.db = self.client.cloudseed
         self.collection = self.db.status
 
-    def init_service(self, env, data):
+    def init_cloudseed(self, data):
         base = {
             '_id': 'cloudseed',
-            'env': env,
             'master': {'machines': [data]}
         }
 
@@ -53,3 +52,6 @@ class MongoResource(object):
             {'_id': 'cloudseed'},
             {'$push': {'%s.machines' % tag: data}}
         )
+
+    def data(self):
+        return self.collection.find_one({'_id': 'cloudseed'})

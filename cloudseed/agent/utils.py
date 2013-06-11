@@ -28,6 +28,11 @@ def master_tunnel(fun):
             password=password)
 
         socket.send_json(fun(*args, **kwargs))
+        response = socket.recv_json()
+
+        if 'data' in response:
+            return response['data']
+
     return action
 
 

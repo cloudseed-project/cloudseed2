@@ -10,39 +10,3 @@ from cloudseed.utils import env
 def fire_event(data, tag=None):
     event = SaltEvent('master', '/var/run/salt/master')
     event.fire_event(data, tag)
-
-
-class CloudseedTCPEvent(SaltEvent):
-    def __init__(self, node, sock_dir=None, **kwargs):
-        kwargs['ipc_mode'] = 'tcp'
-        super(CloudseedTCPEvent, self).__init__(node, sock_dir, **kwargs)
-
-    def connect_pull(self):
-        '''
-        Establish a connection with the event pull socket
-        '''
-
-        url = urlparse(self.pulluri)
-        host, port = url.netloc.split(':')
-
-        cloud = env.cloud()
-
-        vm_ = cloud.vm_profile('master')
-
-        ip_address = cloud.opts['cloudseed']['ip_address']
-        private_key = config.get_config_value('private_key', vm_, cloud.opts)
-        username = config.get_config_value('ssh_username', vm_, cloud.opts)
-        password = config.get_config_value('password', vm_, cloud.opts)
-
-        self.push = ssh.agent_zmq_tunnel(
-            socket_type=zmq.PUSH,
-            host=ip_address,
-            port=port,
-            private_key=private_key,
-            username=username,
-            password=password)
-
-        #self.push = self.context.socket(zmq.PUSH)
-        #self.push.connect(self.pulluri)
-        self.cpush = True
-
