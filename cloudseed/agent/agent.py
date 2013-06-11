@@ -23,7 +23,10 @@ def salt_master_events():
             index = {
             'create.master': cloudseed.agent.actions.register_master,
             'create.minion': cloudseed.agent.actions.register_minion}
-            index.get(action)(data)
+            try:
+                index.get(action)(data)
+            except Exception as e:
+                log.exception(e)
 
 
 def agent():
