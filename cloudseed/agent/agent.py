@@ -67,6 +67,12 @@ def agent():
 
 
 def worker():
+
+    log = logging.getLogger('cloudseed_worker')
+    log_target = logging.FileHandler('/tmp/cloudseed_worker.log')
+    log.addHandler(log_target)
+    log.debug('Starting Cloudseed Reactor')
+
     context = zmq.Context()
 
     # Set up a channel to receive work from the ventilator
@@ -85,7 +91,7 @@ def worker():
             log.debug('Worker received message %s', message)
 
             action = message.get('action', None)
-
+            log.debug('Received action %s', action)
             if action == 'profile':
                 # depending on how many actions come in
                 # we may need to build in a way to limit the
@@ -97,4 +103,6 @@ def worker():
 
             elif action == 'event':
                 tag = message.get('tag', 'cloudseed')
-                cs_events.fire_event(message['data'], tag=tag)
+                data = message.get('data', {})
+                log.debug('Dispatching event %s with tag %s', data, tag)
+                cs_events.fire_event(data, tag=tag)
