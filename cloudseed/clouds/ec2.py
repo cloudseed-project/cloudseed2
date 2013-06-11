@@ -90,12 +90,15 @@ def create_minion(vm_, call=None):
     conf = {
     'ip_address': data['ipAddress'],
     'dns_name': data['dnsName'],
-    'private_ip_address': data['privateIpAddress']
+    'private_ip_address': data['privateIpAddress'],
+    'instance_id': data['instanceId'],
+    'profile': vm_.get('profile', None),
+    'name': data['name']
     }
 
     event = {
     'fun': 'create.minion',
-    'return': data
+    'return': conf
     }
 
     # assumes being run on the master
@@ -126,7 +129,10 @@ def create_master(vm_=None, call=None):
     conf = {
     'ip_address': data['ipAddress'],
     'dns_name': data['dnsName'],
-    'private_ip_address': data['privateIpAddress']
+    'private_ip_address': data['privateIpAddress'],
+    'instance_id': data['instanceId'],
+    'profile': vm_.get('profile', None),
+    'name': data['name']
     }
 
     conf_filename = os.path.join(env.current_env_path(), 'salt', 'cloudseed')
@@ -139,7 +145,7 @@ def create_master(vm_=None, call=None):
 
     event = {
     'fun': 'create.master',
-    'return': data
+    'return': conf
     }
 
     # assumes being run locally

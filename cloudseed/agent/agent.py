@@ -79,7 +79,7 @@ def worker():
     log = logging.getLogger('cloudseed_worker')
     log_target = logging.FileHandler('/tmp/cloudseed_worker.log')
     log.addHandler(log_target)
-    log.debug('Starting Cloudseed Reactor')
+    log.debug('Starting Cloudseed Worker')
 
     context = zmq.Context()
 
