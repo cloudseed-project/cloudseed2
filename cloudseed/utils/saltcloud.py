@@ -46,7 +46,7 @@ class SaltCloudProfile(multiprocessing.Process):
         # load ours
         #cloud = cloudseed.cloud.Cloud(self.config)
         #vm_profile = cloud.vm_profile('master')
-        #vm_profile['securitygroup'] = ['default', 'ssh']
+        #vm_profile['name'] = profile.tag
 
         self.config['log_file'] = '/dev/null'
 
@@ -69,9 +69,11 @@ class SaltCloudProfile(multiprocessing.Process):
         (cloudseed_deploy_path, ) + deploy_scripts_search_path
 
     @staticmethod
-    def _minion_parse_args(cloud, profile, args=None, values=None):
+    def _minion_parse_args(parse_args, profile, self, args=None, values=None):
         args = profile.args + ['-p', profile.profile, profile.tag]
-        cloud.parse_args(args, values)
+
+        # don't go through self
+        parse_args(args, values)
 
     def __init__(self, profile, tag, args):
         self.profile = profile
@@ -103,21 +105,6 @@ class SaltCloudProfile(multiprocessing.Process):
                 cloud)
 
         cloud.run()
-
-
-def bootstrap_master(async=False):
-    '''
-    Intended to be run locally
-    '''
-    prefix = env.current_env_path()
-    return execute_profile(
-        'master',
-        tag='cloudseed-sample-foo-master',
-        cloud_config=os.path.join(prefix, 'salt', 'cloud'),
-        cloud_providers=os.path.join(prefix, 'salt', 'cloud.providers'),
-        cloud_profiles=os.path.join(prefix, 'salt', 'cloud.profiles'),
-        master_config=os.path.join(prefix, 'salt', 'master'),
-        async=async)
 
 
 def execute_profile(profile, tag=None, cloud_config=None, cloud_providers=None,
