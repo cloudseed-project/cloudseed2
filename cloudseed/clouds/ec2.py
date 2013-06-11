@@ -169,11 +169,8 @@ def bootstrap_master(cloud):
     vm_ = cloud.vm_profile('master')
     provider = cloud.provider_profile_full(vm_)
 
-    #
-    # [{'private_key': '/Users/aventurella/.cloudseed/test/keys/test_prod_ec2', 'securitygroup': ['default', 'ssh'], 'ssh_interface': 'public_ips', 'keyname': 'test_prod_ec2', 'location': 'us-west-2', 'key': 'ARI12QQjvliP5pQFQCUlpDI348EvquaAzBEw+V9k', 'provider': 'ec2', 'id': 'AKIAIFMCWURC2SJ4I36Q'}]
-    #
-
     provider['ssh_interface'] = 'public_ips'
+    append_data = {}
 
     if not provider.get('keyname', False):
         keyname = '%s-%s' % (env.location_name(), env.env_name())
@@ -184,18 +181,14 @@ def bootstrap_master(cloud):
             '%s.pem' % keyname)
 
         bootstrap_create_keypair(keyname, filename)
+
+        # set it for the current command
         provider['keyname'] = keyname
         provider['private_key'] = filename
 
-        provider_bytes = filesystem.read_file(cloud.opts['providers_config'])
-        provider_data = yaml.load(provider_bytes)
-        provider_name = vm_['provider']
+        append_data['keyname'] = keyname
+        append_data['private_key'] = 'cloudseed/current/salt/%s.pem' % keyname
 
-        target = provider_data[provider_name]
-        target['keyname'] = keyname
-        target['private_key'] = 'cloudseed/current/salt/%s.pem' % keyname
-
-        writers.write_yaml(cloud.opts['providers_config'], provider_data)
     else:
         if not os.path.isabs(provider['private_key']):
             new_path = os.path.abspath(provider['private_key'])
@@ -222,7 +215,21 @@ def bootstrap_master(cloud):
         if ssh_id:
             authorize_all_intragroup(app_id)
 
+        # master gets both groups, minions
+        # will only receive the app group
+        # unless their profiles specify otherwise
         vm_['securitygroup'] = [app, ssh]
+        append_data['securitygroup'] = [app]
+
+    # write down and new data
+    if append_data:
+        provider_bytes = filesystem.read_file(cloud.opts['providers_config'])
+        provider_data = yaml.load(provider_bytes)
+        provider_name = vm_['provider']
+
+        target = provider_data[provider_name]
+        target.update(append_data)
+        writers.write_yaml(cloud.opts['providers_config'], provider_data)
 
 
 def initial_security_groups():
