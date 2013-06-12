@@ -6,6 +6,7 @@ import functools
 import multiprocessing
 #import threading
 import saltcloud.cli
+from saltcloud.config import config
 from cloudseed.utils import env
 from cloudseed.utils import filesystem
 from cloudseed.agent.services import CloudseedService
@@ -87,6 +88,13 @@ class SaltCloudProfile(multiprocessing.Process):
         # need to ensure that the minion_id is used for the key name
         # and the tag is used for the vm_['name']
         # saltcloud might not be using the minion_id
+        vm_ = self.vm_profile()
+
+        minion_dict = config.get_config_value(
+            'minion', vm_, self.opts, default={}
+        )
+
+        log.debug('minion_dict: %s', minion_dict)
         log.debug('minion_id %s%s', profile.profile, seq)
 
         #self.config['minion']['id'] = '%s%s' % (profile.profile, seq)
