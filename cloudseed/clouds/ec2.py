@@ -77,7 +77,6 @@ def sync_partial_action(run, sudo):
 
 
 def create(vm_=None, call=None):
-    import pdb; pdb.set_trace()
     if vm_['profile'] == 'master':
         return create_master(vm_, call)
 
@@ -170,7 +169,6 @@ def get_configured_provider():
 
 def bootstrap_minion(vm_):
     log.debug('Bootstrapping Minion %s', vm_)
-    import pdb; pdb.set_trace()
     cloud = cloudseed.cloud.Cloud(__opts__)
     provider = cloud.provider_profile_full(vm_)
     securitygroups = provider.get('securitygroup', [])

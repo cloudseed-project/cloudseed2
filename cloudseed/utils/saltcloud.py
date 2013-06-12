@@ -74,7 +74,7 @@ class SaltCloudProfile(multiprocessing.Process):
 
     @staticmethod
     def _minion_parse_args(parse_args, profile, self, args=None, values=None):
-
+        import pdb; pdb.set_trace()
         service = CloudseedService(MongoResource())
         seq = service.next_seq()
         tag = '%s-%s' % (profile.tag, seq)
