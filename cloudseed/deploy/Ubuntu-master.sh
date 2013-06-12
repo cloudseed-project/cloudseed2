@@ -13,7 +13,8 @@ wget -q -O- "http://keyserver.ubuntu.com:11371/pks/lookup?op=get&search=0x4759FA
 
 apt-get update
 apt-get install -y git python-dev python-pip mongodb libzmq3-dev
-pip install gitpython salt-cloud apache-libcloud pymongo
+pip install -e git://github.com/saltstack/salt-cloud.git#egg=develop
+pip install gitpython apache-libcloud pymongo
 apt-get install -y -o DPkg::Options::=--force-confold salt-master
 
 # debugging purposes:
