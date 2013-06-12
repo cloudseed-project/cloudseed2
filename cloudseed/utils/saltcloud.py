@@ -27,6 +27,7 @@ class SaltCloudProfile(multiprocessing.Process):
         args = profile.args + ['-p', profile.profile, profile.tag]
 
         # don't go through self
+        # self here is a saltcloud.cli.SaltCloud()
         parse_args(args, values)
 
         self.config['minion'] = {'master': 'localhost', 'id': 'master'}
@@ -83,6 +84,7 @@ class SaltCloudProfile(multiprocessing.Process):
         args = profile.args + ['-p', profile.profile, tag]
 
         # don't go through self
+        # self here is a saltcloud.cli.SaltCloud()
         parse_args(args, values)
 
         # need to ensure that the minion_id is used for the key name
@@ -91,7 +93,7 @@ class SaltCloudProfile(multiprocessing.Process):
         vm_ = self.vm_profile()
 
         minion_dict = config.get_config_value(
-            'minion', vm_, self.opts, default={}
+            'minion', vm_, self.config, default={}
         )
 
         log.debug('minion_dict: %s', minion_dict)
