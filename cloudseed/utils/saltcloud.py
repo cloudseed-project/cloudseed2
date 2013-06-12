@@ -13,7 +13,7 @@ from cloudseed.agent.resources import MongoResource
 import cloudseed.cloud
 
 
-log = logging.getLogger('cloudseed_worker')
+log = logging.getLogger(__name__)
 
 
 class SaltCloudProfile(multiprocessing.Process):
@@ -88,6 +88,7 @@ class SaltCloudProfile(multiprocessing.Process):
         # and the tag is used for the vm_['name']
         # saltcloud might not be using the minion_id
         log.debug('minion_id %s%s', profile.profile, seq)
+
         #self.config['minion']['id'] = '%s%s' % (profile.profile, seq)
 
     def __init__(self, profile, tag, args):

@@ -45,5 +45,5 @@ def execute_profile(profile, tag=None):
     # depending on how many actions come in
     # we may need to build in a way to limit the
     # number of processes we spawn.
-    log.debug('Bootstrapping profile %s with tag %s', profile, tag)
+    log.debug('Bootstrapping profile \'%s\' with tag \'%s\'', profile, tag)
     cs_saltcloud.execute_profile(profile, tag)
