@@ -56,8 +56,11 @@ class MongoResource(object):
             {'$push': {'machines.%s' % tag: data}}
         )
 
+    def manifest(self):
+        return self.collection.find_one({'_id': 'cloudseed'})
+
     def machines(self):
-        data = self.collection.find_one({'_id': 'cloudseed'})
+        data = self.manifest()
         return data['machines']
 
     def next_seq(self):
@@ -70,5 +73,5 @@ class MongoResource(object):
             {'$inc': {'seq': 1}}
         )
 
-        data = self.collection.find_one({'_id': 'cloudseed'})
+        data = self.manifest()
         return data['seq']

@@ -12,5 +12,8 @@ class CloudseedService(object):
     def next_seq(self):
         self.resource.next_seq()
 
+    def manifest(self):
+        return self.resource.manifest()
+
     def machines(self):
         return self.resource.machines()
