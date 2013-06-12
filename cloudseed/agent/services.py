@@ -10,7 +10,7 @@ class CloudseedService(object):
         self.resource.add_machine(tag, data)
 
     def next_seq(self):
-        self.resource.next_seq()
+        return self.resource.next_seq()
 
     def manifest(self):
         return self.resource.manifest()
