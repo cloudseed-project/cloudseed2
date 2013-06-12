@@ -37,8 +37,8 @@ common commands:
     '''
     args = docopt(
         cloudseed_main.__doc__,
-        version=cloudseed.__version__)
-        #options_first=True)
+        version=cloudseed.__version__,
+        options_first=True)
 
     command = args['<command>']
     argv = [args['<command>']] + args['<args>']

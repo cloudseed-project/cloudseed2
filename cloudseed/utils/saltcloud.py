@@ -77,7 +77,7 @@ class SaltCloudProfile(multiprocessing.Process):
         seq = service.next_seq()
         tag = '%s-%s' % (profile.tag, seq)
 
-        log.debug('Next tag for profile %s: %s', profile.profile, tag)
+        log.debug('Next tag for profile \'%s\': %s', profile.profile, tag)
 
         args = profile.args + ['-p', profile.profile, tag]
 
@@ -146,8 +146,9 @@ def execute_profile(profile, tag=None, cloud_config=None, cloud_providers=None,
     if async:
         action.start()
     else:
-        action.start()
-        action.join()
+        action.run()
+        #action.start()
+        #action.join()
 
     return action
 
