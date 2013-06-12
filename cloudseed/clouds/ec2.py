@@ -212,9 +212,9 @@ def bootstrap_master(cloud):
     # see if the security group is defined on the profile
     # or just assume with cloudseed we are looking for the
     # provider only at this stage.
-    if not provider.get('securitygroup', False):
-        app, ssh = initial_security_groups()
+    app, ssh = initial_security_groups()
 
+    if not provider.get('securitygroup', False):
         app_id = create_securitygroup(
             name=app,
             description='CloudseedApp')
@@ -234,6 +234,9 @@ def bootstrap_master(cloud):
         # unless their profiles specify otherwise
         vm_['securitygroup'] = [app, ssh]
         append_data['securitygroup'] = [app]
+    else:
+        if ssh not in provider['securitygroup']:
+            provider['securitygroup'].append(ssh)
 
     # write down and new data
     if append_data:

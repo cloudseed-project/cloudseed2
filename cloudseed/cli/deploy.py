@@ -18,7 +18,6 @@ def run(argv):
     args = docopt(__doc__, argv=argv)
     profile = args['<profile>'][0]
 
-    seq = commands.seq_for_profile(profile)
     tag = 'cloudseed-%s-%s-%s' % (env.location_name(), env.env_name(), profile)
 
     # TODO ensure we have a bootstrapped master
