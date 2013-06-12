@@ -74,7 +74,6 @@ class SaltCloudProfile(multiprocessing.Process):
 
     @staticmethod
     def _minion_parse_args(parse_args, profile, self, args=None, values=None):
-        import pdb; pdb.set_trace()
         service = CloudseedService(MongoResource())
         seq = service.next_seq()
         tag = '%s-%s' % (profile.tag, seq)
@@ -95,6 +94,12 @@ class SaltCloudProfile(multiprocessing.Process):
 
         minion = self.config.setdefault('minion', {})
         minion['id'] = '%s%s' % (profile.profile, seq)
+
+        # override the initial lookup path for modules.
+        # ensure that our local clouds are searched first, if present
+        # This works with salt.loader.Loaader
+        self.config['extension_modules'] = os.path.join(
+            os.path.dirname(cloudseed.__file__))
 
     def __init__(self, profile, tag, args):
         self.profile = profile
