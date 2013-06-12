@@ -1,4 +1,6 @@
 import logging
+from saltcloud.cli import SaltCloud
+from cloudseed.cloud import Cloud
 from cloudseed.utils import saltcloud as cs_saltcloud
 from cloudseed.utils import events as cs_events
 from .resources import MongoResource
@@ -28,10 +30,15 @@ def dispatch_event(data, tag):
         log.exception(e)
 
 
+def next_seq():
+    service = CloudseedService(MongoResource())
+    return service.next_seq()
+
+
 def status():
     log.debug('Fetching status')
     service = CloudseedService(MongoResource())
-    return service.data()
+    return service.machines()
 
 
 def execute_profile(profile, tag=None):

@@ -86,6 +86,7 @@ def create(vm_=None, call=None):
 def create_minion(vm_, call=None):
     # always assumes the master has been created
     # and that we are running on it.
+    bootstrap_minion(vm_)
     data = saltcloud_ec2_create(vm_)
 
     conf = {
@@ -163,6 +164,19 @@ def get_configured_provider():
         'ec2',
         ('id', 'key')
     )
+
+
+def bootstrap_minion(vm_):
+    cloud = cloudseed.cloud.Cloud(__opts__)
+    provider = cloud.provider_profile_full(vm_)
+    securitygroups = provider.get('securitygroup', [])
+
+    create_securitygroup(
+            name=vm_['name'],
+            description='CloudseedApp')
+
+    # merge security groups
+    vm_['securitygroup'] = securitygroups + [vm_['name']]
 
 
 def bootstrap_master(cloud):

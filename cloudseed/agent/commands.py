@@ -14,3 +14,8 @@ def fire_event(data):
 @master_tunnel
 def status():
     return {'action': 'status'}
+
+
+@master_tunnel
+def seq_for_profile(profile):
+    return {'action': 'seq', 'profile': profile}

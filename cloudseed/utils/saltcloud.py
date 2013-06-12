@@ -8,6 +8,8 @@ import multiprocessing
 import saltcloud.cli
 from cloudseed.utils import env
 from cloudseed.utils import filesystem
+from cloudseed.agent.services import CloudseedService
+from cloudseed.agent.resources import MongoResource
 import cloudseed.cloud
 
 
@@ -70,10 +72,23 @@ class SaltCloudProfile(multiprocessing.Process):
 
     @staticmethod
     def _minion_parse_args(parse_args, profile, self, args=None, values=None):
-        args = profile.args + ['-p', profile.profile, profile.tag]
+
+        service = CloudseedService(MongoResource())
+        seq = service.next_seq()
+        tag = '%s-%s' % (profile.tag, seq)
+
+        log.debug('Next tag for profile %s: %s', profile.profile, tag)
+
+        args = profile.args + ['-p', profile.profile, tag]
 
         # don't go through self
         parse_args(args, values)
+
+        # need to ensure that the minion_id is used for the key name
+        # and the tag is used for the vm_['name']
+        # saltcloud might not be using the minion_id
+        log.debug('minion_id %s%s', profile.profile, seq)
+        self.config['minion']['id'] = '%s%s' % (profile.profile, seq)
 
     def __init__(self, profile, tag, args):
         self.profile = profile

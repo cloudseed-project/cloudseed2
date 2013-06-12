@@ -42,7 +42,10 @@ class MongoResource(object):
     def init_cloudseed(self, data):
         base = {
             '_id': 'cloudseed',
-            'master': {'machines': [data]}
+            'seq': -1,
+            'machines': {
+                'master': [data]
+            }
         }
 
         self.collection.save(base)
@@ -50,8 +53,22 @@ class MongoResource(object):
     def add_machine(self, tag, data):
         self.collection.update(
             {'_id': 'cloudseed'},
-            {'$push': {'%s.machines' % tag: data}}
+            {'$push': {'machines.%s' % tag: data}}
         )
 
-    def data(self):
-        return self.collection.find_one({'_id': 'cloudseed'})
+    def machines(self):
+        data = self.collection.find_one({'_id': 'cloudseed'})
+        return data['machines']
+
+    def next_seq(self):
+        # not really what we need as this seems to be per document.
+        # Adding here for reference in case it comes up.
+        # http://docs.mongodb.org/manual/tutorial/create-an-auto-incrementing-field/
+
+        self.collection.update(
+            {'_id': 'cloudseed'},
+            {'$inc': {'seq': 1}}
+        )
+
+        data = self.collection.find_one({'_id': 'cloudseed'})
+        return data['seq']

@@ -9,5 +9,8 @@ class CloudseedService(object):
     def add_machine(self, tag, data):
         self.resource.add_machine(tag, data)
 
-    def data(self):
-        return self.resource.data()
+    def next_seq(self):
+        self.resource.next_seq()
+
+    def machines(self):
+        return self.resource.machines()
