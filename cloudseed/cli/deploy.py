@@ -19,7 +19,7 @@ log = logging.getLogger(__name__)
 def run(argv):
     args = docopt(__doc__, argv=argv)
     profile = args['<profile>']
-
+    import pdb; pdb.set_trace()
     tag = 'cloudseed-%s-%s-%s' % (env.location_name(), env.env_name(), profile)
 
     # TODO ensure we have a bootstrapped master
