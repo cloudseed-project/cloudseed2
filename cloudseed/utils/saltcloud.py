@@ -88,7 +88,7 @@ class SaltCloudProfile(multiprocessing.Process):
         # and the tag is used for the vm_['name']
         # saltcloud might not be using the minion_id
         log.debug('minion_id %s%s', profile.profile, seq)
-        self.config['minion']['id'] = '%s%s' % (profile.profile, seq)
+        #self.config['minion']['id'] = '%s%s' % (profile.profile, seq)
 
     def __init__(self, profile, tag, args):
         self.profile = profile
@@ -151,9 +151,8 @@ def execute_profile(profile, tag=None, cloud_config=None, cloud_providers=None,
     if async:
         action.start()
     else:
-        action.run()
-        #action.start()
-        #action.join()
+        action.start()
+        action.join()
 
     return action
 
