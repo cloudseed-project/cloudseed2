@@ -18,7 +18,7 @@ def cloudseed_events(daemon=True):
 
 
 def _start_agent(daemon=True):
-    log = logging.getLogger('cloudseed_agent')
+    log = logging.getLogger('cloudseed')
 
     if daemon:
         daemonize()
@@ -31,7 +31,7 @@ def _start_agent(daemon=True):
 
 
 def _start_worker(daemon=True):
-    log = logging.getLogger('cloudseed_worker')
+    log = logging.getLogger('cloudseed')
 
     if daemon:
         daemonize()
@@ -44,7 +44,7 @@ def _start_worker(daemon=True):
 
 
 def _start_events(daemon=True):
-    log = logging.getLogger('cloudseed_events')
+    log = logging.getLogger('cloudseed')
     if daemon:
         daemonize()
         log_target = logging.FileHandler('/tmp/cloudseed_agent.log')

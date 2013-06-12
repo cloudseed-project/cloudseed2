@@ -7,7 +7,7 @@ import cloudseed.agent.actions
 
 def salt_master_events():
 
-    log = logging.getLogger('cloudseed_events')
+    log = logging.getLogger('cloudseed')
     log.debug('Starting Cloudseed Salt Events Reactor')
 
     event = salt.utils.event.MasterEvent('/var/run/salt/master')
@@ -28,7 +28,7 @@ def salt_master_events():
 
 
 def agent():
-    log = logging.getLogger('cloudseed_agent')
+    log = logging.getLogger('cloudseed')
 
     context = zmq.Context()
 
@@ -73,7 +73,7 @@ def agent():
 
 
 def worker():
-    log = logging.getLogger('cloudseed_worker')
+    log = logging.getLogger('cloudseed')
 
     context = zmq.Context()
 
