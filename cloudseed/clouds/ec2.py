@@ -104,6 +104,7 @@ def create_minion(vm_, call=None):
     }
 
     # assumes being run on the master
+    log.debug('Notifying cloudseed \'%s\' is ready %s', vm_['name'], conf)
     events.fire_event(event)
     return data
 
@@ -167,6 +168,8 @@ def get_configured_provider():
 
 
 def bootstrap_minion(vm_):
+    log.debug('Bootstrapping Minion %s', vm_)
+
     cloud = cloudseed.cloud.Cloud(__opts__)
     provider = cloud.provider_profile_full(vm_)
     securitygroups = provider.get('securitygroup', [])

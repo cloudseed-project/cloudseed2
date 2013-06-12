@@ -1,12 +1,11 @@
 from __future__ import absolute_import
-import zmq
-from saltcloud import config
+import logging
 from salt.utils.event import SaltEvent
-from cloudseed.utils import ssh
-from cloudseed.compat import urlparse
-from cloudseed.utils import env
+
+log = logging.getLogger(__name__)
 
 
 def fire_event(data, tag=None):
     event = SaltEvent('master', '/var/run/salt/master')
+    log.debug('Sending salt event %s with tag \'%s\'', data, tag)
     event.fire_event(data, tag)
