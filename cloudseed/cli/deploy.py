@@ -18,7 +18,7 @@ log = logging.getLogger(__name__)
 
 def run(argv):
     args = docopt(__doc__, argv=argv)
-    profile = args['<profile>'][0]
+    profile = args['<profile>']
 
     tag = 'cloudseed-%s-%s-%s' % (env.location_name(), env.env_name(), profile)
 
