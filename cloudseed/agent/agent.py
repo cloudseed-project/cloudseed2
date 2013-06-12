@@ -6,7 +6,7 @@ import cloudseed.agent.actions
 
 
 def salt_master_events():
-
+    print(__name__)
     log = logging.getLogger('cloudseed')
     log.debug('Starting Cloudseed Salt Events Reactor')
 
