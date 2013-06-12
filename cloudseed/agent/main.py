@@ -20,7 +20,11 @@ def cloudseed_events(daemon=True):
 
 def _start_agent(daemon=True):
     log = logging.getLogger('cloudseed')
+    sc_log = logging.getLogger('saltcloud')
+
     log.setLevel(logging.DEBUG)
+    sc_log.setLevel(logging.DEBUG)
+
     if daemon:
         daemonize()
         log_target = logging.FileHandler('/tmp/cloudseed_agent.log')
@@ -28,12 +32,16 @@ def _start_agent(daemon=True):
         log_target = logging.StreamHandler(sys.stdout)
 
     log.addHandler(log_target)
+    sc_log.addHandler(log_target)
     agent()
 
 
 def _start_worker(daemon=True):
     log = logging.getLogger('cloudseed')
+    sc_log = logging.getLogger('saltcloud')
+
     log.setLevel(logging.DEBUG)
+    sc_log.setLevel(logging.DEBUG)
 
     if daemon:
         daemonize()
@@ -42,12 +50,16 @@ def _start_worker(daemon=True):
         log_target = logging.StreamHandler(sys.stdout)
 
     log.addHandler(log_target)
+    sc_log.addHandler(log_target)
     worker()
 
 
 def _start_events(daemon=True):
     log = logging.getLogger('cloudseed')
+    sc_log = logging.getLogger('saltcloud')
+
     log.setLevel(logging.DEBUG)
+    sc_log.setLevel(logging.DEBUG)
 
     if daemon:
         daemonize()
@@ -56,4 +68,5 @@ def _start_events(daemon=True):
         log_target = logging.StreamHandler(sys.stdout)
 
     log.addHandler(log_target)
+    sc_log.addHandler(log_target)
     salt_master_events()

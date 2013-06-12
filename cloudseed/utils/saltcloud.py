@@ -91,7 +91,7 @@ class SaltCloudProfile(multiprocessing.Process):
         # and the tag is used for the vm_['name']
         # saltcloud might not be using the minion_id
 
-        log.debug('minion_id %s%s', profile.profile, seq)
+        log.debug('Setting minion_id to \'%s%s\'', profile.profile, seq)
 
         minion = self.config.setdefault('minion', {})
         minion['id'] = '%s%s' % (profile.profile, seq)
