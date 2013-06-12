@@ -13,7 +13,7 @@ from cloudseed.agent.resources import MongoResource
 import cloudseed.cloud
 
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('cloudseed_worker')
 
 
 class SaltCloudProfile(multiprocessing.Process):
@@ -104,11 +104,6 @@ class SaltCloudProfile(multiprocessing.Process):
         self.saltcloud_parse_args(self, args, values)
 
     def run(self):
-        log = logging.getLogger('cloudseed_worker')
-        log_target = logging.FileHandler('/tmp/cloudseed_worker.log')
-        log.addHandler(log_target)
-        log.debug('Worker Process %s', self.pid)
-
         cloud = saltcloud.cli.SaltCloud()
 
         if self.profile == 'master':
