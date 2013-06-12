@@ -1,3 +1,4 @@
+import logging
 from .utils import daemonize
 from .agent import worker
 from .agent import agent
@@ -17,18 +18,38 @@ def cloudseed_events(daemon=True):
 
 
 def _start_agent(daemon=True):
+    log = logging.getLogger('cloudseed_agent')
+
     if daemon:
         daemonize()
+        log_target = logging.FileHandler('/tmp/cloudseed_agent.log')
+    else:
+        log_target = logging.StreamHandler()
+
+    log.addHandler(log_target)
     agent()
 
 
 def _start_worker(daemon=True):
+    log = logging.getLogger('cloudseed_worker')
+
     if daemon:
         daemonize()
+        log_target = logging.FileHandler('/tmp/cloudseed_agent.log')
+    else:
+        log_target = logging.StreamHandler()
+
+    log.addHandler(log_target)
     worker()
 
 
 def _start_events(daemon=True):
+    log = logging.getLogger('cloudseed_events')
     if daemon:
         daemonize()
+        log_target = logging.FileHandler('/tmp/cloudseed_agent.log')
+    else:
+        log_target = logging.StreamHandler()
+
+    log.addHandler(log_target)
     salt_master_events()

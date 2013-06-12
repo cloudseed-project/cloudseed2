@@ -30,9 +30,6 @@ def salt_master_events():
 
 
 def agent():
-    log = logging.getLogger('cloudseed_agent')
-    log_target = logging.FileHandler('/tmp/cloudseed_agent.log')
-    log.addHandler(log_target)
     log.debug('Starting Cloudseed Agent')
 
     context = zmq.Context()
@@ -78,11 +75,7 @@ def agent():
 
 
 def worker():
-
     log = logging.getLogger('cloudseed_worker')
-    log_target = logging.FileHandler('/tmp/cloudseed_worker.log')
-    log.addHandler(log_target)
-    log.debug('Starting Cloudseed Worker')
 
     context = zmq.Context()
 
