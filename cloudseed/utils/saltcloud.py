@@ -6,7 +6,7 @@ import functools
 import multiprocessing
 #import threading
 import saltcloud.cli
-from saltcloud.config import config
+from saltcloud import config
 from cloudseed.utils import env
 from cloudseed.utils import filesystem
 from cloudseed.agent.services import CloudseedService
