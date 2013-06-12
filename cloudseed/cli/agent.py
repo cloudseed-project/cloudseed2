@@ -1,9 +1,10 @@
 '''
 usage:
-  cloudseed agent [<action>]
+  cloudseed agent [<action>] [-d|--daemonize]
 
 options:
   -h, --help         Show this screen.
+  -d --daemonize     Daemonize
   <action>           One of (listen|worker|events)
 '''
 import logging
@@ -28,8 +29,8 @@ def run(argv):
         command = actions.get(args['<action>'], False)
 
         if command:
-            command()
+            command(daemon=args.get('--daemonize', False))
     else:
-        subprocess.Popen(['cloudseed', 'agent', 'listen'])
-        subprocess.Popen(['cloudseed', 'agent', 'worker'])
-        subprocess.Popen(['cloudseed', 'agent', 'events'])
+        subprocess.Popen(['cloudseed', 'agent', 'listen', '-d'])
+        subprocess.Popen(['cloudseed', 'agent', 'worker', '-d'])
+        subprocess.Popen(['cloudseed', 'agent', 'events', '-d'])
