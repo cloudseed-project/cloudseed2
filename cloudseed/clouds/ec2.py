@@ -89,13 +89,15 @@ def create_minion(vm_, call=None):
     bootstrap_minion(vm_)
     data = saltcloud_ec2_create(vm_)
 
+    log.debug('VM Created %s', data)
+
     conf = {
     'ip_address': data['ipAddress'],
     'dns_name': data['dnsName'],
     'private_ip_address': data['privateIpAddress'],
     'instance_id': data['instanceId'],
     'profile': vm_.get('profile', None),
-    'name': vm_['name']
+    'name': vm_['name'],
     }
 
     event = {
@@ -122,6 +124,8 @@ def create_master(vm_=None, call=None):
     }
 
     data = saltcloud_ec2_create(vm_)
+
+    log.debug('VM Created %s', data)
 
     if 'Errors' in data:
         message = data['Errors']['Error']['Message']
