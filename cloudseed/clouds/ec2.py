@@ -77,7 +77,6 @@ def sync_partial_action(run, sudo):
 
 
 def create(vm_=None, call=None):
-    import pdb; pdb.set_trace()
     if vm_['profile'] == 'master':
         return create_master(vm_, call)
 

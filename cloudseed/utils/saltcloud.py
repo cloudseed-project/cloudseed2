@@ -105,7 +105,7 @@ class SaltCloudProfile(multiprocessing.Process):
 
     def run(self):
         cloud = saltcloud.cli.SaltCloud()
-
+        import pdb; pdb.set_trace()
         if self.profile == 'master':
             cloud.parse_args = functools.partial(
                 SaltCloudProfile._master_parse_args,
