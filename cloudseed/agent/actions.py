@@ -12,8 +12,9 @@ log = logging.getLogger(__name__)
 
 def register_minion(data):
     log.debug('Registering minion %s', data)
-    # service = CloudseedService(MongoResource())
-    # service.add_machine(tag, data)
+    tag = data.get('profile', 'unknown')
+    service = CloudseedService(MongoResource())
+    service.add_machine(tag, data)
 
 
 def register_master(data):
