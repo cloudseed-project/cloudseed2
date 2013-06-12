@@ -12,6 +12,7 @@ log = logging.getLogger(__name__)
 def master_tunnel(fun):
     def action(*args, **kwargs):
         cloud = env.cloud()
+        import pdb; pdb.set_trace()
         vm_ = cloud.vm_profile('master')
         ip_address = cloud.opts['cloudseed']['ip_address']
 
