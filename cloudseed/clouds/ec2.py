@@ -167,6 +167,7 @@ def get_configured_provider():
 
 
 def bootstrap_minion(vm_):
+    import pdb; pdb.set_trace()
     cloud = cloudseed.cloud.Cloud(__opts__)
     provider = cloud.provider_profile_full(vm_)
     securitygroups = provider.get('securitygroup', [])
