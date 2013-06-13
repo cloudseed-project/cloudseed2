@@ -18,8 +18,8 @@ import cloudseed.cloud
 log = logging.getLogger(__name__)
 
 
-#class SaltCloudProfile(multiprocessing.Process):
-class SaltCloudProfile(threading.Thread):
+class SaltCloudProfile(multiprocessing.Process):
+#class SaltCloudProfile(threading.Thread):
 
     @staticmethod
     def _master_parse_args(parse_args, profile, self, args=None, values=None):
