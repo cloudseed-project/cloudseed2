@@ -75,3 +75,12 @@ def daemonize():
     #os.dup2(dev_null.fileno(), sys.stdin.fileno())
     #os.dup2(dev_null.fileno(), sys.stdout.fileno())
     #os.dup2(dev_null.fileno(), sys.stderr.fileno())
+
+    sys.stdout.flush()
+    sys.stderr.flush()
+    si = file(os.devnull, 'r')
+    so = file(os.devnull, 'a+')
+    se = file(os.devnull, 'a+', 0)
+    os.dup2(si.fileno(), sys.stdin.fileno())
+    os.dup2(so.fileno(), sys.stdout.fileno())
+    os.dup2(se.fileno(), sys.stderr.fileno())
