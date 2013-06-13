@@ -56,8 +56,6 @@ def daemonize():
     os.chdir('/')
     os.setsid()
     os.umask(18)
-    os.setuid(0)
-    os.setgid(0)
 
     # do second fork
     try:
