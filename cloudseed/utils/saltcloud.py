@@ -156,9 +156,9 @@ def execute_profile(profile, tag=None, cloud_config=None, cloud_providers=None,
     if async:
         action.start()
     else:
-        action.run()
-        #action.start()
-        #action.join()
+        #action.run()
+        action.start()
+        action.join()
 
     return action
 
