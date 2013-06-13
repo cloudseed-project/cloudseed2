@@ -45,8 +45,8 @@ def _start_agent(daemon=True):
     sc_log.setLevel(logging.DEBUG)
 
     if daemon:
-        _set_user('root')
         daemonize()
+        _set_user('root')
         log_target = logging.FileHandler('/tmp/cloudseed_agent.log')
     else:
         log_target = logging.StreamHandler(sys.stdout)
@@ -64,8 +64,8 @@ def _start_worker(daemon=True):
     sc_log.setLevel(logging.DEBUG)
 
     if daemon:
-        _set_user('root')
         daemonize()
+        _set_user('root')
         log_target = logging.FileHandler('/tmp/cloudseed_agent.log')
     else:
         log_target = logging.StreamHandler(sys.stdout)
@@ -83,8 +83,8 @@ def _start_events(daemon=True):
     sc_log.setLevel(logging.DEBUG)
 
     if daemon:
-        _set_user('root')
         daemonize()
+        _set_user('root')
         log_target = logging.FileHandler('/tmp/cloudseed_agent.log')
     else:
         log_target = logging.StreamHandler(sys.stdout)
