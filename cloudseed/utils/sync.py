@@ -86,6 +86,9 @@ def _add_saltcloud_conf(manifest, cloud):
     saltcloud_conf = yaml.load(
         filesystem.read_file('cloudseed/current/salt/cloud'))
 
+    if not saltcloud_conf:
+        saltcloud_conf = {}
+
     ssh_interface = cloud.opts.get('ssh_interface', 'private_ips')
 
     interface_ips = {
