@@ -1,10 +1,11 @@
 from __future__ import absolute_import
 import os
+import sys
 import logging
 import tempfile
 import functools
 import multiprocessing
-#import threading
+import threading
 import saltcloud.cli
 from saltcloud import config
 from cloudseed.utils import env
@@ -17,8 +18,8 @@ import cloudseed.cloud
 log = logging.getLogger(__name__)
 
 
-class SaltCloudProfile(multiprocessing.Process):
-# class SaltCloudProfile(threading.Thread):
+#class SaltCloudProfile(multiprocessing.Process):
+class SaltCloudProfile(threading.Thread):
 
     @staticmethod
     def _master_parse_args(parse_args, profile, self, args=None, values=None):
@@ -135,7 +136,7 @@ class SaltCloudProfile(multiprocessing.Process):
 def execute_profile(profile, tag=None, cloud_config=None, cloud_providers=None,
                     cloud_profiles=None, master_config=None, async=False):
 
-    cloudseed_args = []
+    cloudseed_args = ['--out', 'quiet']
 
     if cloud_config:
         cloudseed_args += ['--cloud-config', cloud_config]
@@ -156,10 +157,9 @@ def execute_profile(profile, tag=None, cloud_config=None, cloud_providers=None,
     if async:
         action.start()
     else:
-        #action.run()
-        action.start()
-        action.join()
-
+        action.run()
+        #action.start()
+        #action.join()
     return action
 
 
