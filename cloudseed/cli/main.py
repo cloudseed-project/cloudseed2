@@ -11,28 +11,20 @@ import cloudseed
 def cloudseed_main():
     '''
 usage:
-  cloudseed [--version] [--verbose] [--help] [-c|--config=<config>]
-            [-p|--profile=<profile>] [-r|--provider=<provider>]
+  cloudseed [--version] [--help]
             <command> [<args>...]
 
 options:
-  -c --config=<config>     config to use
-  -p --profile=<profile>   profile to use
-  -r --provider=<provider> provider to use
   -h --help                show this screen
-  --verbose                show debug output
   --version                show version
 
 
 common commands:
-    init <project>            initialize a new .cloudseed <project>
-    init env <environment>    initialize a new .cloudseed <environment> for the current project
-    bootstrap <environment>   deploy a salt master for the specified <environment>
+    init <environment>    initialize a new .cloudseed <environment> for the current project
+    bootstrap
     ssh                       ssh into the master server, requires bootstrap
     status                    current cloudseed status
-    env <environment>         charge cloudseed environment to specified <environment>
-    destroy <environment>     destroys all boxes associated with this environment
-    deploy <state>            deploy a state to a machine
+    deploy <profile>          deploy a state to a machine
     sync                      sync states and modules to the currently bootstrapped environment
     '''
     args = docopt(
