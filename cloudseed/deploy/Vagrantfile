@@ -1,0 +1,26 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+    # All Vagrant configuration is done here. The most common configuration
+    # options are documented and commented below. For a complete reference,
+    # please see the online documentation at vagrantup.com.
+
+    # Every Vagrant virtual environment requires a box to build off of.
+    config.vm.box = "precise64"
+
+    ## For masterless, mount your salt file root
+    config.vm.synced_folder "cloudseed/current/srv/", "/srv/"
+
+    ## Use all the defaults:
+    config.vm.provision :salt do |salt|
+        salt.run_highstate = true
+        salt.install_master = true
+        salt.master_config = "cloudseed/current/salt/master"
+        salt.minion_config = "cloudseed/current/vagrant/minion"
+        salt.minion_key = "cloudseed/current/vagrant/minion.pem"
+        salt.minion_pub = "cloudseed/current/vagrant/minion.pub"
+        salt.bootstrap_script = "cloudseed/current/vagrant/bootstrap-salt.sh"
+        salt.seed_master = {minion: salt.minion_pub}
+    end
+end
