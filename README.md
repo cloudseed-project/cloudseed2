@@ -24,6 +24,13 @@ written.
 
 **Keep in mind this software is not complete**
 
+You are going to have to know some things about salt-cloud. Cloudseed was
+orinigally built not using salt-cloud, but it seemed silly since salt-cloud
+does a good job at handling all of the various cloud providers.
+
+You can read more about salt-cloud here, specifically Profiles and Providers:
+https://salt-cloud.readthedocs.org/en/latest/
+
 ### Known issues
 Keep in mind this is pretty early on in the process of development. Yes, it
 works. There appear to be a couple of corner cases when creating EC2 vm's
@@ -161,8 +168,69 @@ master  # Salt master configuration
 The contents of this folder will be synced to the cloud for you when you
 `cloudseed bootstrap` or on demand with a `cloudseed sync`
 
-Additionally, the Vagrantfile is already setup to share the master configuration
-with the guest OS.
+Additionally, the Vagrantfile is already setup to share the master
+configuration with the guest OS.
+
+You **MUST** edit cloud.profiles and cloud.providers if you wish to deploy
+to the cloud.
+
+See the salt-cloud docs for details:
+https://salt-cloud.readthedocs.org/en/latest/
+
+One important thing to note here. For EC2 based deploys, salt-cloud
+requires you to provide your private_key and key name as well as security
+groups you would like your instances to belong to. Cloudseed provides some
+conveneinces around this workflow.
+
+If you do not define a private_key/key name in your provider, Cloudseed
+will create one for you on AWS and save the key to
+`cloudseed/test/salt/<key>.pem`.
+
+Please note, you should not share this key with anyone. It is the key to access
+your instances. Would be pretty unwise to hand it out.
+
+Additionally, if you do not provide a securitygroup, Cloudseed will handle that
+for you as well.
+
+By default it will create an ssh security group and assign that to your master
+as well as an application based security group that allows for open
+communiction between all instances in the group.
+
+Once it makes these changes, it will rewrite your local cloud.provider file
+with the proper updates in place.
+
+The minimum cloudseed based cloud.provider then look like this:
+
+```
+aws_test:
+  id: <your AWS Key>
+  key: <your AWS Secret>
+  location: us-west-2
+  provider: ec2
+```
+
+A cloud.profile that uses this provider would look like this:
+
+```
+master:
+  provider: aws_test
+  image: ami-8e109ebe
+  size: Micro Instance
+  script: Ubuntu-master
+  ssh_username: ubuntu
+```
+
+A few things here:
+
+You **MUST** create at least 1 profile with the name of `master`. This
+represents the instance that will be created with a `cloudseed bootstrap`
+
+Again, you **MUST** have a profile defined named **master**.
+
+Note the use of `script` here. This is a cloudseed based script, not a
+salt-cloud one. Salt-cloud contains it's own scripts for it's minions which
+should be used for all of your profiles EXCLUDING your **master** profile.
+
 
 #### srv/
 
@@ -217,4 +285,3 @@ you have the ability override anything you like by providing it in the
 `cloudseed/test/srv/salt` folder. Remember this folder gets synced to the cloud
 for you at bootstrap time or on demand, so if you include it, there,
 it will be deployed.
-
