@@ -171,7 +171,7 @@ The contents of this folder will be synced to the cloud for you when you
 Additionally, the Vagrantfile is already setup to share the master
 configuration with the guest OS.
 
-You **MUST** edit cloud.profiles and cloud.providers if you wish to deploy
+You **MUST** edit *cloud.profiles* and *cloud.providers* if you wish to deploy
 to the cloud.
 
 See the salt-cloud docs for details:
