@@ -175,8 +175,14 @@ def get_configured_provider():
 
 def bootstrap_minion(vm_):
     log.debug('Bootstrapping Minion %s', vm_)
-    cloud = cloudseed.cloud.Cloud(__opts__)
-    provider = cloud.provider_profile_full(vm_)
+    # cloud = cloudseed.cloud.Cloud(__opts__)
+    # provider = cloud.provider_profile_full(vm_)
+
+    securitygroups = config.get_config_value(
+        'securitygroup',
+         vm_,
+         __opts__)
+
     securitygroups = provider.get('securitygroup', [])
 
     create_securitygroup(
