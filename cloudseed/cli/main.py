@@ -25,6 +25,7 @@ common commands:
     ssh                       ssh into the master server, requires bootstrap
     status                    current cloudseed status
     deploy <profile>          deploy a state to a machine
+    deploy destroy            destroy a deployed set of virtual machines. This cannot be undone
     sync                      sync states and modules to the currently bootstrapped environment
     '''
     args = docopt(
