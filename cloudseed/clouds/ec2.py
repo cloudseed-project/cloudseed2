@@ -292,9 +292,10 @@ def bootstrap_master_security_groups(vm_, provider):
     vm_['securitygroup'] = list(groups)
 
     # return all of the groups to be used
-    # for minons, sans the ssh group. You should
+    # for the provider, sans the ssh group. You should
     # only be able to ssh into a minon from the master.
-    return list(groups - exclusions)
+    # exclude the groups we found on the vm profile as well
+    return list(groups - exclusions.union(vm_groups))
 
 
 def initial_security_groups():
