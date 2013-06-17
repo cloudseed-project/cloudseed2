@@ -181,12 +181,25 @@ def bootstrap_minion(vm_):
          vm_,
          __opts__)
 
+    # this should be an array with at LEAST our
+    # cloudseed marker in tow if not more, assuming it was
+    # bootstrapped through cloudseed
+    cloud = cloudseed.cloud.Cloud(__opts__)
+    provider = cloud.provider_profile_full(vm_)
+    provider_groups = provider.get('securitygroup', [])
+
+    # len 3
+    # cloudseed-project-env
+    marker = next(x for x in provider_groups
+                  if x.startswith('cloudseed') and
+                  len(x.split('-')) == 3)
+
     create_securitygroup(
             name=vm_['name'],
             description='CloudseedApp')
 
     # merge security groups
-    vm_['securitygroup'] = securitygroups + [vm_['name']]
+    vm_['securitygroup'] = securitygroups + [vm_['name'], marker]
 
 
 def bootstrap_master(cloud):
