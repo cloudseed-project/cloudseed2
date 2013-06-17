@@ -38,25 +38,6 @@ common commands:
 
     initialize_logging(verbose=False)
 
-    # try:
-    #     profile_config = os.path.abspath(args['--profile'][0])
-    # except IndexError:
-    #     profile_config = None
-
-    # try:
-    #     local_config = os.path.abspath(args['--config'][0])
-    # except IndexError:
-    #     local_config = None
-
-    # try:
-    #     provider_config = os.path.abspath(args['--provider'][0])
-    # except IndexError:
-    #     provider_config = None
-
-    # config = Config(FilesystemConfig(
-    #     local_config=local_config,
-    #     profile_config=profile_config,
-    #     provider_config=provider_config))
 
     if command == 'push':
         from cloudseed.cli import push
@@ -95,26 +76,11 @@ common commands:
         from cloudseed.cli import destroy
         destroy.run(argv)
 
-    # elif command == 'agent':
-    #     from cloudseed.cli import agent
-    #     agent.run(config, argv)
-
-
-    # elif command == 'instance':
-    #     from cloudseed.cli import instance
-    #     instance.run(config, argv)
-
-    # elif command == 'status':
-    #     from cloudseed.cli import status
-    #     status.run(config, argv)
-
     # elif command == 'env':
     #     from cloudseed.cli import env
     #     env.run(config, argv)
 
-    # elif command == 'destroy':
-    #     from cloudseed.cli import destroy
-    #     destroy.run(config, argv)
+
 
     elif args['<command>'] in ('help', None):
         exit(call(['cloudseed', '--help']))
