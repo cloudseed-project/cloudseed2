@@ -95,7 +95,16 @@ class SaltCloudProfile(multiprocessing.Process):
 
         minion = self.config.setdefault('minion', {})
         minion['id'] = '%s%s' % (profile.profile, seq)
+
+        # http://docs.saltstack.com/ref/states/startup.html
+        log.debug('Setting minion startup state to \'highstate\'')
         minion['startup_states'] = 'highstate'
+
+        grains = minion.setdefault('grains', {})
+        roles = grains.setdefault('roles', [])
+
+        log.debug('Appending role \'%s\' to minion', profile.profile)
+        roles.append(profile.profile)
 
         # override the initial lookup path for modules.
         # ensure that our local clouds are searched first, if present
