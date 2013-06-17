@@ -14,8 +14,8 @@ from cloudseed.utils import events
 import cloudseed.agent.commands
 
 
+# IMPORTANT: there is some patching performed at the bottom of this file.
 log = logging.getLogger(__name__)
-saltcloud_ec2_create = saltcloud.clouds.ec2.create
 
 
 def __virtual__():
@@ -181,18 +181,7 @@ def bootstrap_minion(vm_):
          vm_,
          __opts__)
 
-    # this should be an array with at LEAST our
-    # cloudseed marker in tow if not more, assuming it was
-    # bootstrapped through cloudseed
-    cloud = cloudseed.cloud.Cloud(__opts__)
-    provider = cloud.provider_profile_full(vm_)
-    provider_groups = provider.get('securitygroup', [])
-
-    # len 3
-    # cloudseed-project-env
-    marker = next(x for x in provider_groups
-                  if x.startswith('cloudseed') and
-                  len(x.split('-')) == 3)
+    marker = marker_security_group()
 
     create_securitygroup(
             name=vm_['name'],
@@ -438,3 +427,111 @@ def authorize_securitygroup(group_id, ip_protocol, from_port, to_port,
         if code != 'InvalidGroup.Duplicate':
             log.error(result)
             return None
+
+
+def marker_security_group():
+    cloud = cloudseed.cloud.Cloud(__opts__)
+    vm_ = cloud.vm_profile('master')
+    provider = cloud.provider_profile_full(vm_)
+
+    # this should be an array with at LEAST our
+    # cloudseed marker in tow if not more, assuming it was
+    # bootstrapped through cloudseed
+    provider_groups = provider.get('securitygroup', [])
+
+    try:
+        # len 3
+        # cloudseed-project-env
+        return next(x for x in provider_groups
+                    if x.startswith('cloudseed') and
+                    len(x.split('-')) == 3)
+    except StopIteration:
+        return None
+
+
+# def list_nodes_full(location=None):
+#     '''
+#     Return a list of the VMs that are on the provider
+#     This is directly copied from
+#     '''
+#     if not location:
+#         ret = {}
+#         locations = set(
+#             get_location(vm_) for vm_ in __opts__['vm']
+#             if _vm_provider(vm_) == 'ec2'
+#         )
+#         for loc in locations:
+#             ret.update(_list_nodes_full(loc))
+#         return ret
+
+#     return _list_nodes_full(location)
+
+
+def _list_nodes_full(location=None):
+    '''
+    Return a list of the VMs that in this location
+    We only want the nodes that match our marker security group
+    '''
+    # The only changes from the original _list_nodes_full
+    # in saltcloud.clouds.ec2 is the addition of the marker fetch
+    # the filters in params and 2 calls to
+    # saltcloud.clouds.ec2._extract_name_tag, Otherwise, its the same.
+    # The calls to saltcloud.clouds.ec2._extract_name_tag
+    # are not different we just have to access the proper function
+    # since cloudseed's ec2 module does not define _extract_name_tag
+
+    marker = marker_security_group()
+
+    ret = {}
+
+    # consider fetching the group-id with marker_security_group
+    # in addition to the name. VPC instances would need group-id
+    #
+    # http://docs.aws.amazon.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeInstances.html
+    # If the instance is in a nondefault VPC, you must use group-id instead
+
+    params = {
+    'Action': 'DescribeInstances',
+    'Filter.1.Name': 'group-name',
+    'Filter.1.Value.1': marker}
+
+    instances = query(params, location=location)
+
+    for instance in instances:
+        # items could be type dict or list (for stopped EC2 instances)
+        if isinstance(instance['instancesSet']['item'], list):
+            for item in instance['instancesSet']['item']:
+                # calls into original ec2
+                name = saltcloud.clouds.ec2._extract_name_tag(item)
+                ret[name] = item
+                ret[name].update(
+                    dict(
+                        id=item['instanceId'],
+                        image=item['imageId'],
+                        size=item['instanceType'],
+                        state=item['instanceState']['name'],
+                        private_ips=item.get('privateIpAddress', []),
+                        public_ips=item.get('ipAddress', [])
+                    )
+                )
+        else:
+            item = instance['instancesSet']['item']
+            # calls into original ec2
+            name = saltcloud.clouds.ec2._extract_name_tag(item)
+            ret[name] = item
+            ret[name].update(
+                dict(
+                    id=item['instanceId'],
+                    image=item['imageId'],
+                    size=item['instanceType'],
+                    state=item['instanceState']['name'],
+                    private_ips=item.get('privateIpAddress', []),
+                    public_ips=item.get('ipAddress', [])
+                )
+            )
+    return ret
+
+
+saltcloud_ec2_create = saltcloud.clouds.ec2.create
+saltcloud.clouds.ec2._list_nodes_full = _list_nodes_full
+

@@ -53,7 +53,7 @@ class SaltCloudProfile(multiprocessing.Process):
         #vm_profile = cloud.vm_profile('master')
         #vm_profile['name'] = profile.tag
 
-        self.config['log_file'] = '/dev/null'
+        self.config['log_file'] = os.devnull
 
         tempdir = tempfile.mkdtemp()
         filesystem.mkdirs(os.path.join(tempdir, 'minion'))
@@ -98,7 +98,7 @@ class SaltCloudProfile(multiprocessing.Process):
 
         # override the initial lookup path for modules.
         # ensure that our local clouds are searched first, if present
-        # This works with salt.loader.Loaader
+        # This works with salt.loader.Loader
         self.config['extension_modules'] = os.path.join(
             os.path.dirname(cloudseed.__file__))
 
@@ -133,6 +133,54 @@ class SaltCloudProfile(multiprocessing.Process):
         cloud.run()
 
 
+def destroy(names=None, cloud_config=None, cloud_providers=None,
+            cloud_profiles=None, master_config=None):
+
+    cloudseed_args = ['--destroy', '--out', 'quiet']
+
+    if cloud_config:
+        cloudseed_args += ['--cloud-config', cloud_config]
+
+    if cloud_providers:
+        cloudseed_args += ['--providers-config', cloud_providers]
+
+    if cloud_profiles:
+        cloudseed_args += ['--profiles', cloud_profiles]
+
+    if master_config:
+        cloudseed_args += ['--master-config', master_config]
+
+    def parse_args(original_parse_args, self, args=None, values=None):
+
+        original_parse_args(args=cloudseed_args)
+
+        # redirect log output
+        self.config['log_file'] = os.devnull
+
+        # override the initial lookup path for modules.
+        # ensure that our local clouds are searched first, if present
+        # This works with salt.loader.Loader
+        self.config['extension_modules'] = os.path.join(
+            os.path.dirname(cloudseed.__file__))
+
+        if not names:
+            cloud = cloudseed.cloud.Cloud(self.config)
+            vm_ = cloud.vm_profile('master')
+            provider = cloud.provider(vm_)
+            fun = '%s.list_nodes' % provider
+            data = cloud.clouds[fun]()
+            self.config['names'] = data.keys()
+        else:
+            self.config['names'] = names
+
+    cloud = saltcloud.cli.SaltCloud()
+    cloud.parse_args = functools.partial(
+                parse_args,
+                cloud.parse_args,
+                cloud)
+    cloud.run()
+
+
 def execute_profile(profile, tag=None, cloud_config=None, cloud_providers=None,
                     cloud_profiles=None, master_config=None, async=False):
 
@@ -161,6 +209,3 @@ def execute_profile(profile, tag=None, cloud_config=None, cloud_providers=None,
         #action.start()
         #action.join()
     return action
-
-
-
