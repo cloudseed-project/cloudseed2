@@ -95,6 +95,7 @@ class SaltCloudProfile(multiprocessing.Process):
 
         minion = self.config.setdefault('minion', {})
         minion['id'] = '%s%s' % (profile.profile, seq)
+        minion['startup_states'] = 'highstate'
 
         # override the initial lookup path for modules.
         # ensure that our local clouds are searched first, if present

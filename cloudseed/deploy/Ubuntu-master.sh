@@ -30,7 +30,7 @@ mv master.pem /etc/salt/pki/minion/minion.pem
 apt-get install -y -o DPkg::Options::=--force-confold salt-minion
 
 
-#sleep 4; /usr/bin/salt "master" state.highstate
+# sleep 4; /usr/bin/salt "master" state.highstate
 # minion will be started automatically by install
 # install mongo and cloudseed and start the agent here
 
