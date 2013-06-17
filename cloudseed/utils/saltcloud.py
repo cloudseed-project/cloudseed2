@@ -32,6 +32,17 @@ class SaltCloudProfile(multiprocessing.Process):
         parse_args(args, values)
 
         self.config['minion'] = {'master': 'localhost', 'id': 'master'}
+        minion = self.config['minion']
+
+        # http://docs.saltstack.com/ref/states/startup.html
+        log.debug('Setting minion startup state to \'highstate\'')
+        minion['startup_states'] = 'highstate'
+
+        grains = minion.setdefault('grains', {})
+        roles = grains.setdefault('roles', [])
+
+        log.debug('Appending role \'%s\' to minion', profile.profile)
+        roles.append(profile.profile)
 
         # if we don't disable the start action,
         # it will wait on the machine bootstrapping
