@@ -4,6 +4,7 @@ from saltcloud.clouds.ec2 import *
 import saltcloud.config as config
 import cloudseed.cloud
 from cloudseed.compat import urlquote
+from cloudseed.compat import string_type
 from cloudseed.utils import filesystem
 from cloudseed.utils import writers
 from cloudseed.utils import env
@@ -215,35 +216,8 @@ def bootstrap_master(cloud):
             new_path = os.path.abspath(provider['private_key'])
             provider['private_key'] = new_path
 
-    # perhaps run though saltcloud's config look up system?
-    # see if the security group is defined on the profile
-    # or just assume with cloudseed we are looking for the
-    # provider only at this stage.
-    app, ssh = initial_security_groups()
-
-    if not provider.get('securitygroup', False):
-        app_id = create_securitygroup(
-            name=app,
-            description='CloudseedApp')
-
-        ssh_id = create_securitygroup(
-            name=ssh,
-            description='CloudseedAppSSH')
-
-        if app_id:
-            authorize_ssh_public(ssh_id)
-
-        if ssh_id:
-            authorize_all_intragroup(app_id)
-
-        # master gets both groups, minions
-        # will only receive the app group
-        # unless their profiles specify otherwise
-        vm_['securitygroup'] = [app, ssh]
-        append_data['securitygroup'] = [app]
-    else:
-        if ssh not in provider['securitygroup']:
-            provider['securitygroup'].append(ssh)
+    groups = bootstrap_master_security_groups(vm_, provider)
+    append_data['securitygroup'] = groups
 
     # write down and new data
     if append_data:
@@ -254,6 +228,73 @@ def bootstrap_master(cloud):
         target = provider_data[provider_name]
         target.update(append_data)
         writers.write_yaml(cloud.opts['providers_config'], provider_data)
+
+
+def bootstrap_master_security_groups(vm_, provider):
+    # perhaps run though saltcloud's config look up system?
+    # see if the security group is defined on the profile
+
+    app, ssh = initial_security_groups()
+    provider_groups = provider.get('securitygroup', [])
+    vm_groups = vm_.get('securitygroup', [])
+
+    if isinstance(provider_groups, string_type):
+        provider_groups = [provider_groups]
+
+    if isinstance(vm_groups, string_type):
+        vm_groups = [vm_groups]
+
+    groups = set(provider_groups).union(vm_groups)
+
+    # Did the user provide their own groups?
+    # No matter what, we make our marker security group
+    # which is used in locating our cloudseed instances.
+    # If the user provided their own groups, the marker
+    # will get no ip permissions. Otherwise, we get the
+    # group full communication rights to others in the same group
+
+    # no security groups were provided, lets start making our own
+    # 1st up is SSH to the new master.
+    cloudseed_groups = set()
+    exclusions = set()
+
+    if not groups:
+        # there is an issue with passing spaces to the salt-cloud
+        # query function, so the descriptions contain no spaces.
+        # need to figure out if it's on cloudseed's end or salt-cloud's
+        ssh_id = create_securitygroup(
+            name=ssh,
+            description='CloudseedAppSSH')
+
+        if ssh_id:
+            authorize_ssh_public(ssh_id)
+
+        cloudseed_groups.add(ssh)
+        exclusions.add(ssh)
+
+    if app not in groups:
+        # there is an issue with passing spaces to the salt-cloud
+        # query function, so the descriptions contain no spaces.
+        # need to figure out if it's on cloudseed's end or salt-cloud's
+        app_id = create_securitygroup(
+            name=app,
+            description='CloudseedApp')
+
+        if not groups:
+            authorize_all_intragroup(app_id)
+
+        cloudseed_groups.add(app)
+
+    groups = groups.union(cloudseed_groups)
+
+    # need to check if salt-cloud cares if it's exactly a list
+    # if it doesn't remove this conversion to list
+    vm_['securitygroup'] = list(groups)
+
+    # return all of the groups to be used
+    # for minons, sans the ssh group. You should
+    # only be able to ssh into a minon from the master.
+    return list(groups - exclusions)
 
 
 def initial_security_groups():

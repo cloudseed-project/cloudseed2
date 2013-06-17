@@ -35,7 +35,7 @@ common commands:
     command = args['<command>']
     argv = [args['<command>']] + args['<args>']
 
-    initialize_logging(verbose=args['--verbose'])
+    initialize_logging(verbose=False)
 
     # try:
     #     profile_config = os.path.abspath(args['--profile'][0])
