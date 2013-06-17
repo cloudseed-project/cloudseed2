@@ -38,7 +38,6 @@ common commands:
 
     initialize_logging(verbose=False)
 
-
     if command == 'push':
         from cloudseed.cli import push
         push.run(argv)
