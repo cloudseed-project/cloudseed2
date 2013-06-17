@@ -183,7 +183,7 @@ def bootstrap_minion(vm_):
          vm_,
          __opts__)
 
-    securitygroups = provider.get('securitygroup', [])
+    # securitygroups = provider.get('securitygroup', [])
 
     create_securitygroup(
             name=vm_['name'],
