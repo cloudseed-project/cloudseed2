@@ -493,7 +493,9 @@ def _list_nodes_full(location=None):
     params = {
     'Action': 'DescribeInstances',
     'Filter.1.Name': 'group-name',
-    'Filter.1.Value.1': marker}
+    'Filter.1.Value.1': marker,
+    'Filter.2.Name': 'instance-state-name',
+    'Filter.2.Value.1': 'running'}
 
     instances = query(params, location=location)
 
