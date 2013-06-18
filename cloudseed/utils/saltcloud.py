@@ -118,6 +118,7 @@ class SaltCloudProfile(multiprocessing.Process):
 
         log.debug('Appending role \'%s\' to minion', profile.profile)
         roles.append(profile.profile)
+
         import pdb; pdb.set_trace()
 
         # override the initial lookup path for modules.
@@ -227,7 +228,8 @@ def execute_profile(profile, tag=None, cloud_config=None, cloud_providers=None,
     action = SaltCloudProfile(profile, tag, cloudseed_args)
 
     if async:
-        action.start()
+        #action.start()
+        action.run()
     else:
         action.run()
         #action.start()
