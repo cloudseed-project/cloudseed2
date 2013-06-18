@@ -9,7 +9,11 @@ import os
 import logging
 from docopt import docopt
 import yaml
+import saltcloud.cli
+import saltcloud.config as config
 from cloudseed.utils import ssh
+from cloudseed.utils import env
+import cloudseed.cloud
 
 
 log = logging.getLogger(__name__)
@@ -47,14 +51,35 @@ def run(argv):
         # TODO Add Error Messaging
         return
 
-    provider = providers.get(profile['provider'], None)
+    prefix = os.path.join(env.current_env_path(), 'salt')
+    cloud_config = os.path.join(prefix, 'cloud')
+    cloud_providers = os.path.join(prefix, 'cloud.providers')
+    cloud_profiles = os.path.join(prefix, 'cloud.profiles')
+    master_config = os.path.join(prefix, 'master')
+
+    cloudseed_args = [
+    '--cloud-config', cloud_config,
+    '--providers-config', cloud_providers,
+    '--profiles', cloud_profiles,
+    '--master-config', master_config]
+
+    cli = saltcloud.cli.SaltCloud()
+    cli.parse_args(args=cloudseed_args)
+
+    cloud = cloudseed.cloud.Cloud(cli.config)
+    vm_ = cloud.vm_profile('master')
+
+    provider = config.get_config_value(
+        'provider',
+        vm_,
+        cloud.opts)
 
     if not provider:
         # TODO Add Error Messaging
         return
 
-    username = profile.get('ssh_username', False)
-    identity = provider.get('private_key', False)
+    username = config.get_config_value('ssh_username', vm_, cloud.opts)
+    identity = config.get_config_value('private_key', vm_, cloud.opts)
     host = conf.get('ip_address', False)
 
     if username and identity and host:
