@@ -118,6 +118,7 @@ class SaltCloudProfile(multiprocessing.Process):
 
         log.debug('Appending role \'%s\' to minion', profile.profile)
         roles.append(profile.profile)
+        import pdb; pdb.set_trace()
 
         # override the initial lookup path for modules.
         # ensure that our local clouds are searched first, if present
