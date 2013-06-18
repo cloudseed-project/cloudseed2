@@ -263,7 +263,8 @@ def bootstrap_master_security_groups(vm_, provider):
     cloudseed_groups = set()
     exclusions = set()
 
-    if not groups:
+    # any group contains SSH?
+    if not any([x for x in groups if 'ssh' in x]):
         # there is an issue with passing spaces to the salt-cloud
         # query function, so the descriptions contain no spaces.
         # need to figure out if it's on cloudseed's end or salt-cloud's

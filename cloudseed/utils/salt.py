@@ -6,6 +6,17 @@ from .writers import write_string
 from .filesystem import mkdirs
 
 
+def sync_key(key_name, client=None):
+    if not client:
+        cloud = env.cloud()
+        client = ssh.master_client(cloud)
+
+    ssh.sudo(
+            client,
+            'salt \'*\' ssh.set_auth_key_from_file ubuntu salt://keys/%s' % \
+            key_name)
+
+
 def master_salt_call_highstate():
     # cloud = env.cloud()
     # client = ssh.master_client(cloud)
