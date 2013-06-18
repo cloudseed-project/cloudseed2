@@ -71,6 +71,7 @@ def sync_partial_manifest(manifest):
 
 def sync_full_action(run, sudo):
     sudo('chmod 600 /etc/salt/cloud.pem')
+    sudo('mkdir -p /srv/cloudseed/keys')
 
 
 def sync_partial_action(run, sudo):

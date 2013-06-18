@@ -11,7 +11,7 @@ from cloudseed.utils import filesystem
 from cloudseed.utils import writers
 
 
-def sync_archive(local, remote, cloud):
+def sync_file(local, remote, cloud):
     sftp_client = sftp.master_client(cloud)
     sftp.put(sftp_client, local, remote)
 
@@ -117,7 +117,7 @@ def _sync_action(filename, cloud, run, sudo):
     run('mkdir -p /tmp/cloudseed')
 
     base = os.path.basename(filename)
-    sync_archive(
+    sync_file(
         local=filename,
         remote='/tmp/cloudseed/%s' % base,
         cloud=cloud)

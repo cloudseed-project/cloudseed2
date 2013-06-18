@@ -23,7 +23,6 @@ class Cloud(Cloud):
                 return self.opts['providers'][provider][0]
 
     def vm_profile(self, name):
-
         try:
             return [x for x in self.opts['vm']
                     if x['profile'] == name][0]

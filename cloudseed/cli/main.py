@@ -73,6 +73,10 @@ common commands:
         from cloudseed.cli import destroy
         destroy.run(argv)
 
+    elif command == 'keys':
+        from cloudseed.cli import keys
+        keys.run(argv)
+
     # elif command == 'env':
     #     from cloudseed.cli import env
     #     env.run(config, argv)
