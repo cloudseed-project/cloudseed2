@@ -106,7 +106,10 @@ class SaltCloudProfile(multiprocessing.Process):
 
         log.debug('Setting minion_id to \'%s\'', minion_id)
 
-        minion = self.config.setdefault('minion', {})
+        vm_ = next(x for x in self.config['vm']
+                   if x['profile'] == profile.profile)
+
+        minion = vm_.setdefault('minion', {})
         minion['id'] = minion_id
 
         # http://docs.saltstack.com/ref/states/startup.html
