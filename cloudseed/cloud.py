@@ -11,16 +11,13 @@ class Cloud(Cloud):
         self.clouds = cloudseed.loader.clouds(opts)
 
     def provider_profile_full(self, vm_):
-        provider = vm_['provider']
 
-        if ':' in provider:
-            # We have the alias and the provider
-            # Return the provider
-            alias, provider = provider.split(':')
-            provider
+        alias, driver = self.lookup_providers(vm_['provider'])
+        providers = self.opts['providers']
 
-        if provider in self.opts['providers']:
-                return self.opts['providers'][provider][0]
+        data = providers.get(alias, {})
+        target = data.get(driver, {})
+        return target
 
     def vm_profile(self, name):
         try:

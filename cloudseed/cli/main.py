@@ -34,7 +34,7 @@ common commands:
     command = args['<command>']
     argv = [args['<command>']] + args['<args>']
 
-    initialize_logging(verbose=False)
+    initialize_logging(verbose=True)
 
     if command == 'push':
         from cloudseed.cli import push

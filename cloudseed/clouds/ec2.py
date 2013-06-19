@@ -468,6 +468,26 @@ def marker_security_group():
 
 #     return _list_nodes_full(location)
 
+def destroy(name, call=None):
+    '''
+    Simple Pass Though Function.
+    See list_nodes for rationale
+    '''
+    return saltcloud.clouds.ec2.destroy(name, call=call)
+
+
+def list_nodes():
+    '''
+    Simple Pass Though Function.
+    We do this so when this function is referenced, it will
+    pull in the cloudseed module, not the saltcloud version.
+    Specifically, the CloudProviderContext does a:
+    mod = sys.modules[self.__function.__module__]
+    if the function is not bound to this module we end
+    up with problems
+    '''
+    return saltcloud.clouds.ec2.list_nodes()
+
 
 def _list_nodes_full(location=None):
     '''
@@ -481,7 +501,6 @@ def _list_nodes_full(location=None):
     # The calls to saltcloud.clouds.ec2._extract_name_tag
     # are not different we just have to access the proper function
     # since cloudseed's ec2 module does not define _extract_name_tag
-
     marker = marker_security_group()
 
     ret = {}

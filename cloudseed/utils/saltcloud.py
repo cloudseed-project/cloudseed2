@@ -203,10 +203,11 @@ def destroy(names=None, cloud_config=None, cloud_providers=None,
         if not names:
             cloud = cloudseed.cloud.Cloud(self.config)
             vm_ = cloud.vm_profile('master')
-            provider = cloud.provider(vm_)
-            fun = '%s.list_nodes' % provider
+            alias, driver = cloud.lookup_providers(vm_['provider'])
+            fun = '%s.list_nodes' % driver
             data = cloud.clouds[fun]()
             self.config['names'] = data.keys()
+            #self.config['names'] = ['cloudseed-sample-foo']
         else:
             self.config['names'] = names
 
