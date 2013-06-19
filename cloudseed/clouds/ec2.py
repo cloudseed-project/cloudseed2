@@ -118,7 +118,7 @@ def create_master(vm_=None, call=None):
     # always assumes we are running locally, creating a
     # master for the 1st time
     cloud = cloudseed.cloud.Cloud(__opts__)
-    bootstrap_master(cloud)
+    bootstrap_master(vm_, cloud)
 
     master = filesystem.read_file(__opts__['master_config'])
 
@@ -192,8 +192,7 @@ def bootstrap_minion(vm_):
     vm_['securitygroup'] = securitygroups + [vm_['name'], marker]
 
 
-def bootstrap_master(cloud):
-    vm_ = cloud.vm_profile('master')
+def bootstrap_master(vm_, cloud):
     provider = cloud.provider_profile_full(vm_)
 
     provider['ssh_interface'] = 'public_ips'
@@ -228,9 +227,9 @@ def bootstrap_master(cloud):
     if append_data:
         provider_bytes = filesystem.read_file(cloud.opts['providers_config'])
         provider_data = yaml.load(provider_bytes)
-        provider_name = vm_['provider']
+        alias, driver = vm_['provider'].split(':')
 
-        target = provider_data[provider_name]
+        target = provider_data[alias]
         target.update(append_data)
         writers.write_yaml(cloud.opts['providers_config'], provider_data)
 
@@ -450,23 +449,6 @@ def marker_security_group():
     except StopIteration:
         return None
 
-
-# def list_nodes_full(location=None):
-#     '''
-#     Return a list of the VMs that are on the provider
-#     This is directly copied from
-#     '''
-#     if not location:
-#         ret = {}
-#         locations = set(
-#             get_location(vm_) for vm_ in __opts__['vm']
-#             if _vm_provider(vm_) == 'ec2'
-#         )
-#         for loc in locations:
-#             ret.update(_list_nodes_full(loc))
-#         return ret
-
-#     return _list_nodes_full(location)
 
 def destroy(name, call=None):
     '''
