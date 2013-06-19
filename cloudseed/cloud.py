@@ -24,9 +24,8 @@ class Cloud(Cloud):
 
     def vm_profile(self, name):
         try:
-            return [x for x in self.opts['vm']
-                    if x['profile'] == name][0]
-        except IndexError:
+            return self.opts['profiles'][name]
+        except KeyError:
             # TODO need a better Error, for now, just
             # re raise so we die
             raise  # profile does not exist
