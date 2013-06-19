@@ -53,7 +53,8 @@ def sync_full_manifest(manifest):
     providers = filesystem.read_file(__opts__['providers_config'])
 
     providers_data = yaml.load(providers)
-    master_provider = providers_data[vm_['provider']]
+    alias, driver = vm_['provider'].split(':')
+    master_provider = providers_data[alias]
 
     master_provider['private_key'] = '/etc/salt/cloud.pem'
     cloud_providers = yaml.safe_dump(providers_data, default_flow_style=False)
