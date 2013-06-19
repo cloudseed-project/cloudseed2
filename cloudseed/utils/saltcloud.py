@@ -106,6 +106,10 @@ class SaltCloudProfile(multiprocessing.Process):
 
         log.debug('Setting minion_id to \'%s\'', minion_id)
 
+        import pdb; pdb.set_trace()
+        # minion_dict = config.get_config_value(
+        #     'minion', vm_, self.opts, default={}
+        # )
         vm_ = next(x for x in self.config['vm']
                    if x['profile'] == profile.profile)
 
