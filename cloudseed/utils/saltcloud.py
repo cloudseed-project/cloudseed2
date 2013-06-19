@@ -29,10 +29,16 @@ class SaltCloudProfile(multiprocessing.Process):
 
         # don't go through self
         # self here is a saltcloud.cli.SaltCloud()
+
         parse_args(args, values)
 
-        self.config['minion'] = {'master': 'localhost', 'id': 'master'}
-        minion = self.config['minion']
+        # self.config['minion'] = {'master': 'localhost', 'id': 'master'}
+
+        vm_ = self.config['profiles']['master']
+
+        minion = vm_.setdefault('minion', {})
+        minion['master'] = 'localhost'
+        minion['id'] = 'master'
 
         # http://docs.saltstack.com/ref/states/startup.html
         log.debug('Setting minion startup state to \'highstate\'')
@@ -112,8 +118,8 @@ class SaltCloudProfile(multiprocessing.Process):
         # minion_dict = config.get_config_value(
         #     'minion', vm_, self.opts, default={}
         # )
-        vm_ = self.config['profiles'][profile.profile]
 
+        vm_ = self.config['profiles'][profile.profile]
         minion = vm_.setdefault('minion', {})
         minion['id'] = minion_id
 

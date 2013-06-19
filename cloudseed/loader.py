@@ -18,6 +18,14 @@ def clouds(opts):
         )
     )
 
-    functions = load.gen_functions()
+    # Let's bring __active_provider_name__, defaulting to None, to all cloud
+    # drivers. This will get temporarily updated/overridden with a context
+    # manager when needed.
+    pack = {
+        'name': '__active_provider_name__',
+        'value': None
+    }
+
+    functions = load.gen_functions(pack)
 
     return functions
