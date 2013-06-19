@@ -31,10 +31,10 @@ def sync_partial():
         '/etc/salt/cloud.profiles')
 
     vm_ = cloud.vm_profile('master')
-    provider = cloud.provider(vm_)
+    alias, driver = cloud.lookup_providers(vm_['provider'])
 
     action = cloud.clouds.get(
-        '%s.sync_partial_manifest' % provider, lambda x: None)
+        '%s.sync_partial_manifest' % driver, lambda x: None)
 
     action(manifest)
 
@@ -69,10 +69,10 @@ def sync_full():
     _add_saltcloud_conf(manifest, cloud)
 
     vm_ = cloud.vm_profile('master')
-    provider = cloud.provider(vm_)
+    alias, driver = cloud.lookup_providers(vm_['provider'])
 
     action = cloud.clouds.get(
-        '%s.sync_full_manifest' % provider, lambda x: None)
+        '%s.sync_full_manifest' % driver, lambda x: None)
 
     action(manifest)
 
@@ -134,7 +134,7 @@ def _sync_full_action(filename, cloud):
     run = functools.partial(ssh.run, ssh_client)
 
     vm_ = cloud.vm_profile('master')
-    provider = cloud.provider(vm_)
+    alias, driver = cloud.lookup_providers(vm_['provider'])
 
     _sync_action(filename, cloud, run, sudo)
 
@@ -143,7 +143,7 @@ def _sync_full_action(filename, cloud):
     sudo('chmod 600 /etc/salt/cloud')
 
     provider_action = cloud.clouds.get(
-        '%s.sync_full_action' % provider,
+        '%s.sync_full_action' % driver,
         lambda x, y: None)
 
     provider_action(run, sudo)
@@ -155,14 +155,14 @@ def _sync_partial_action(filename, cloud):
     run = functools.partial(ssh.run, ssh_client)
 
     vm_ = cloud.vm_profile('master')
-    provider = cloud.provider(vm_)
+    alias, driver = cloud.lookup_providers(vm_['provider'])
 
     _sync_action(filename, cloud, run, sudo)
 
     sudo('chmod 600 /etc/salt/cloud.profiles')
 
     provider_action = cloud.clouds.get(
-        '%s.sync_full_action' % provider,
+        '%s.sync_full_action' % driver,
         lambda x, y: None)
 
     provider_action(run, sudo)
