@@ -233,7 +233,8 @@ def execute_profile(profile, tag=None, cloud_config=None, cloud_providers=None,
     action = SaltCloudProfile(profile, tag, cloudseed_args)
 
     if async:
-        action.start()
+        #action.start()
+        action.run()
     else:
         action.run()
         #action.start()
