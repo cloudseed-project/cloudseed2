@@ -7,7 +7,7 @@ and salt-cloud (https://github.com/saltstack/salt-cloud). It's Vagrant
 abilities are provided courtesy of salty-vagrant (https://github.com/saltstack/salty-vagrant).
 
 Cloudseed provides a default Vagrant setup with all the proper hookups to enable
-your VM to run as a salt master an minion.
+your VM to run as a salt master and minion.
 
 Additionally, it comes preconfigured to read your salt states from a public
 git reporitory; no need to make copies of them all over the place.
