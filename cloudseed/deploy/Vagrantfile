@@ -26,5 +26,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         salt.minion_pub = "cloudseed/current/vagrant/minion.pub"
         salt.bootstrap_script = "cloudseed/current/vagrant/bootstrap-salt.sh"
         salt.seed_master = {minion: salt.minion_pub}
+        salt.verbose = true
+        salt.bootstrap_options = "-D"
     end
 end
