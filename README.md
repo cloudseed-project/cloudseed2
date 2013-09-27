@@ -53,10 +53,9 @@ You can read more about [salt-cloud here, specifically Profiles and Providers][s
 	git clone https://github.com/cloudseed-project/cloudseed2.git cloudseed
 	cd cloudseed
 	python setup.py develop
-	
 	```
 
--  Setup project- 
+1. Setup project- 
 
 	```
 	cd ~/Projects
@@ -69,26 +68,26 @@ You can read more about [salt-cloud here, specifically Profiles and Providers][s
 	An environment called `test` has now been creating and has become the active environment.
 
 
--  Make any needed changes to ```cloudseed/test/vagrant/minion```
+1. Make any needed changes to ```cloudseed/test/vagrant/minion```
 
--  Start Vagrant instance and provision
+1. Start Vagrant instance and provision
 
 	```
 	vagrant up --provision
 	```
 
--  Configure application by making changes to the following files:
+1. Configure application by making changes to the following files:
 	-  ```cloudseed/test/salt/cloud.profiles```
 	-  ```cloudseed/test/salt/cloud.provders```
 
--  Bootstrap and Deploy
+1. Bootstrap and Deploy
 
 	```
 	cloudseed bootstrap
 	cloudseed deploy <profile>
 	```
 
--  Test
+1. Test
 
 	```
 	cloudseed ssh
