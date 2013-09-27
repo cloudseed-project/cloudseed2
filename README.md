@@ -1,16 +1,17 @@
+## Table of Contents
+
+- Features
+- Getting Started
+
 # Cloudseed
+>Build locally with vagrant, then take that work and deploy it to the cloud.
 
-*Build locally with vagrant, then take that work and deploy it to the cloud.*
+[Cloudseed][cloudseed] is a wrapper for [SaltStack][salt] and [Salt Cloud][salt-cloud]. It's [Vagrant][vagrant] abilities are provided courtesy of [Salty Vagrant][salty-vagrant] which is now integrated into [Vagrant][vagrant].
 
-Cloudseed is basically a wrapper around salt (https://github.com/saltstack/salt)
-and salt-cloud (https://github.com/saltstack/salt-cloud). It's Vagrant
-abilities are provided courtesy of salty-vagrant (https://github.com/saltstack/salty-vagrant).
+[Cloudseed][cloudseed] provides a default [Vagrant][vagrant] configuration with all the hookups to enable your [VM][vm] to run with a [salt master and minion][salt-configuration].
 
-Cloudseed provides a default Vagrant setup with all the proper hookups to enable
-your VM to run as a salt master and minion.
-
-Additionally, it comes preconfigured to read your salt states from a public
-git reporitory; no need to make copies of them all over the place.
+Additionally, there is now a method to read salt states from a public
+git reporitory; eliminating the need to make copies of states throughout projects.
 
 Currently, Cloudseed only works with salt-cloud's **ec2** provider. Additionally
 the only bootstrap script provided is for Ubuntu. Note however, that Cloudseed
@@ -19,104 +20,95 @@ salt-cloud is capable of being implemented under cloudseed. Specifically
 the cloud provider extensions that cloudseed requires would just need to be
 written.
 
+## Features
+
+### General
+>TODO: review all features
+
+- Vagrant
+- Remotely managed Salt states
+
+### Supported Providers
+Currently only EC2 is supported.
 
 ## Requirements
+>TODO: review requirements
 
-**Keep in mind this software is not complete**
+* Ruby
+* Python
+* Vagrant 1.3+
 
 You are going to have to know some things about salt-cloud. Cloudseed was
 orinigally built not using salt-cloud, but it seemed silly since salt-cloud
 does a good job at handling all of the various cloud providers.
 
-You can read more about salt-cloud here, specifically Profiles and Providers:
-https://salt-cloud.readthedocs.org/en/latest/
-
-### Known issues
-Keep in mind this is pretty early on in the process of development. Yes, it
-works. There appear to be a couple of corner cases when creating EC2 vm's
-currently that can cause your *local->cloud* setup to not go as well.
-Specifically I have gotten this issue more than a few times while testing:
-
-https://github.com/saltstack/salt-cloud/issues/618
+You can read more about [salt-cloud here, specifically Profiles and Providers][salt-cloud-docs].
 
 
-A lot of the logging is currently enabled. When you issue commands, you will
-probably see some drama inder the hood.
+## Getting started
 
-Again, EC2 is the only provider currently setup to work.
+1. Install Cloudseed
 
-Ubuntu is currently the only OS supported. Again, this is really just a matter
-of authoring the extentions on the other providers.
+	```
+	git clone https://github.com/cloudseed-project/cloudseed2.git cloudseed
+	cd cloudseed
+	python setup.py develop
+	
+	```
 
-Switching environments is not yet supported. It's just changing the symlink,
-I just need to expose it.
+-  Setup project- 
 
-Destroying your cloud setup is not yet implemented. You will need to do that
-from the AWS dashboard for now. `cloudseed destroy` will be implemented soon.
-
-**Vagrant** (http://www.vagrantup.com)
-
-**Salty-Vagrant**
-At the time of this writing, you will need to install the development version
-of the salty-vagrant plugin. Why? We need to use the minion key presseding
-feature which, as far as I can tell, is only available in the development
-version. This is pretty simple to do, you can find instructions here:
-
-https://github.com/saltstack/salty-vagrant#installing-from-source
+	```
+	cd ~/Projects
+	mkdir myproject && cd myproject
+	cloudseed init test
+	```
+	`cloudseed init` takes 1 argument. This argument specifies the environment to create. Multiple environments may be initialize for a single project.
+	>TODO: explain how to init multiple envs
+	
+	An environment called `test` has now been creating and has become the active environment.
 
 
-**Cloudseed**
-Salt and salt-cloud will both be installed when you install the Cloudseed lib,
-which will need to be done from source:
+-  Make any needed changes to ```cloudseed/test/vagrant/minion```
 
-### Getting started
+-  Start Vagrant instance and provision
 
-#### TL;DR
+	```
+	vagrant up --provision
+	```
 
-```
-cd ~/Projects
-mkdir myproject && cd myproject
-cloudseed init test
+-  Configure application by making changes to the following files:
+	-  ```cloudseed/test/salt/cloud.profiles```
+	-  ```cloudseed/test/salt/cloud.provders```
 
-... edit cloudseed/test/vagrant/minion ...
+-  Bootstrap and Deploy
 
-vagrant up
+	```
+	cloudseed bootstrap
+	cloudseed deploy <profile>
+	```
 
-... build your app ..
+-  Test
 
-... edit cloudseed/test/salt/cloud.profiles ...
-... edit cloudseed/test/salt/cloud.provders ...
+	```
+	cloudseed ssh
+	```
 
-cloudseed bootstrap
-cloudseed deploy <profile>
 
-... for kicks lets log into the master server ...
 
-cloudseed ssh
-```
 
-#### Details
 
-```
-git clone https://github.com/cloudseed-project/cloudseed2.git cloudseed
-cd cloudseed
-python setup.py develop
-```
 
-With Cloudseed installed, lets start our project.
 
-```
-cd ~/Projects
-mkdir myproject && cd myproject
-cloudseed init test
-```
 
-Note here that `init` takes 1 argument. This is the environment you would like
-to create. Cloudseed lets you initialize multiple environments for a single
-project.
 
-We have created an environment called `test`. In creating an environment it
-has become our active environment as well.
+
+
+
+
+
+
+
 
 Now lets see how the contents of our folder has changed:
 
@@ -285,3 +277,47 @@ you have the ability override anything you like by providing it in the
 `cloudseed/test/srv/salt` folder. Remember this folder gets synced to the cloud
 for you at bootstrap time or on demand, so if you include it, there,
 it will be deployed.
+
+
+
+## Known issues
+Keep in mind this is pretty early on in the process of development. Yes, it
+works. There appear to be a couple of corner cases when creating EC2 vm's
+currently that can cause your *local->cloud* setup to not go as well.
+Specifically I have gotten this issue more than a few times while testing:
+
+https://github.com/saltstack/salt-cloud/issues/618
+
+
+A lot of the logging is currently enabled. When you issue commands, you will
+probably see some drama inder the hood.
+
+Again, EC2 is the only provider currently setup to work.
+
+Ubuntu is currently the only OS supported. Again, this is really just a matter
+of authoring the extentions on the other providers.
+
+Switching environments is not yet supported. It's just changing the symlink,
+I just need to expose it.
+
+Destroying your cloud setup is not yet implemented. You will need to do that
+from the AWS dashboard for now. `cloudseed destroy` will be implemented soon.
+
+**Vagrant** (http://www.vagrantup.com)
+
+**Salty-Vagrant**
+Now included with Vagrant. 
+
+**Cloudseed**
+Salt and salt-cloud will both be installed when you install the Cloudseed lib,
+which will need to be done from source:
+
+
+[salt]: https://github.com/saltstack/salt
+[salt-configuration]: http://docs.saltstack.com/topics/configuration.html
+[cloudseed]: https://github.com/cloudseed-project/cloudseed2/
+[vagrant]: http://www.vagrantup.com/
+[salty-vagrant]: https://github.com/saltstack/salty-vagrant
+[salt-cloud]: https://github.com/saltstack/salt-cloud
+[salt-cloud-docs]: https://salt-cloud.readthedocs.org/en/latest/
+[vm]: http://en.wikipedia.org/wiki/Virtual_machine
