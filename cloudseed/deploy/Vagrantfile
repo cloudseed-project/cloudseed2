@@ -20,7 +20,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     ## For masterless, mount your salt file root
     config.vm.synced_folder "cloudseed/current/srv/", "/srv/"
 
-    ## Use all the defaults:
+    ## Setup:
+    config.vm.provision :shell, :path => "cloudseed/current/vagrant/setup.sh"
+
+    ## Salt:
     config.vm.provision :salt do |salt|
         salt.run_highstate = true
         salt.install_master = true
@@ -31,6 +34,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         salt.bootstrap_script = "cloudseed/current/vagrant/bootstrap-salt.sh"
         salt.seed_master = {minion: salt.minion_pub}
         salt.verbose = true
-        salt.bootstrap_options = "-D"
+        salt.install_type = "git"
+        salt.install_args = "v0.17.0"
+        salt.bootstrap_options = "-D -F"
     end
+
 end
