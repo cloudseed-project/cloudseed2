@@ -20,9 +20,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     ## For masterless, mount your salt file root
     config.vm.synced_folder "cloudseed/current/srv/", "/srv/"
 
-    ## Setup:
-    config.vm.provision :shell, :path => "cloudseed/current/vagrant/setup.sh"
-
     ## Salt:
     config.vm.provision :salt do |salt|
         salt.run_highstate = true
