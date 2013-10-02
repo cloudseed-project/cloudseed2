@@ -34,10 +34,31 @@ Currently only EC2 is supported.
 ## Requirements
 >TODO: review requirements
 
+### General
 * Ruby
 * Python
+	* Swig
 * Vagrant 1.3+
 
+	```
+git clone git@github.com:mitchellh/vagrant.git vagrant
+cd vagrant
+bundle install
+rake install
+	```
+
+### OS X
+
+#### Homebrew
+
+Once [Homebrew][homebrew] is installed Python and its required libraries can easily be installed.
+
+```
+brew install python swig
+``` 
+
+
+### Background information
 You are going to have to know some things about salt-cloud. Cloudseed was
 orinigally built not using salt-cloud, but it seemed silly since salt-cloud
 does a good job at handling all of the various cloud providers.
@@ -162,8 +183,7 @@ The contents of this folder will be synced to the cloud for you when you
 Additionally, the Vagrantfile is already setup to share the master
 configuration with the guest OS.
 
-You **MUST** edit *cloud.profiles* and *cloud.providers* if you wish to deploy
-to the cloud.
+You **MUST** edit *cloud.profiles* and *cloud.providers* if you wish to deploy to the cloud.
 
 See the salt-cloud docs for details:
 https://salt-cloud.readthedocs.org/en/latest/
@@ -320,3 +340,4 @@ which will need to be done from source:
 [salt-cloud]: https://github.com/saltstack/salt-cloud
 [salt-cloud-docs]: https://salt-cloud.readthedocs.org/en/latest/
 [vm]: http://en.wikipedia.org/wiki/Virtual_machine
+[homebrew]: http://brew.sh/
