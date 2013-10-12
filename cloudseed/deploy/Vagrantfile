@@ -20,6 +20,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     ## For masterless, mount your salt file root
     config.vm.synced_folder "cloudseed/current/srv/", "/srv/"
 
+    ## Install Saltstack GitFS requirements
+    config.vm.provision :shell, :inline => "sudo apt-get update"
+    config.vm.provision :shell, :inline => "sudo apt-get install python-dev git-core python-setuptools -y"
+    config.vm.provision :shell, :inline => "sudo easy_install GitPython"
+
     ## Salt:
     config.vm.provision :salt do |salt|
         salt.run_highstate = true
@@ -28,7 +33,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         salt.minion_config = "cloudseed/current/vagrant/minion"
         salt.minion_key = "cloudseed/current/vagrant/minion.pem"
         salt.minion_pub = "cloudseed/current/vagrant/minion.pub"
-        salt.bootstrap_script = "cloudseed/current/vagrant/bootstrap-salt.sh"
+        #salt.bootstrap_script = "cloudseed/current/vagrant/bootstrap-salt.sh"
         salt.seed_master = {minion: salt.minion_pub}
         salt.verbose = true
         salt.install_type = "git"
