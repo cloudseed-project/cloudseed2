@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 import os
 import subprocess
-from saltcloud.utils import gen_keys
+from .keys import gen_keys
 from .writers import write_string
 from .filesystem import mkdirs
 from .filesystem import read_file

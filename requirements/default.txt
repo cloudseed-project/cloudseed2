@@ -1,8 +1,6 @@
-boto
 confypy
 docopt
 jinja2
-paramiko
+pycrypto
 pyyaml
-salt-cloud
-salt
+requests

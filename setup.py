@@ -23,9 +23,7 @@ tests_require = ['nose']
 
 packages = [
     'cloudseed',
-    'cloudseed.agent',
     'cloudseed.cli',
-    'cloudseed.clouds',
     'cloudseed.utils',
 ]
 
@@ -34,9 +32,9 @@ setup(
     version='0.0.1',
     description='Cloudseed',
     long_description=readme,
-    author='Adam Venturella <aventurella@gmail.com>, Dino Petrone <dinopetrone@gmail.com> Aubrey Taylor <aubricus@gmail.com>',
-    author_email='aventurella@gmail.com, dinopetrone@gmail.com aubricus@gmail.com',
-    url='https://github.com/aventurella/cloudseed',
+    author='Adam Venturella <aventurella@gmail.com>, Daniel Smith <dsmith@blitzagency.com>',
+    author_email='aventurella@gmail.com, dsmith@blitzagency.com',
+    url='https://github.com/aventurella/cloudseed2',
     license=license,
     packages=packages,
     package_data={'': ['LICENSE']},

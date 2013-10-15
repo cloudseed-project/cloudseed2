@@ -1,9 +1,11 @@
 '''
 usage:
-  cloudseed init [<environment>]
+  cloudseed init [options]
 
 options:
-  -h, --help            Show this screen.
+  -n <name>, --name=<name>  Name of the environment to initialize [default: default]
+  -h, --help                Show this screen.
+
 
 '''
 import os
@@ -22,7 +24,7 @@ log = logging.getLogger(__name__)
 
 def run(argv):
     args = docopt(__doc__, argv=argv)
-    init(env=args['<environment>'])
+    init(env=args['--name'])
     print('Cloudseed initialized')
 
 

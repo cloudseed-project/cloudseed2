@@ -1,40 +1,8 @@
 from __future__ import absolute_import
 import os
-from cloudseed.utils import ssh
 from cloudseed.utils import env
 from .writers import write_string
 from .filesystem import mkdirs
-
-
-def sync_key(key_name, client=None):
-    if not client:
-        cloud = env.cloud()
-        client = ssh.master_client(cloud)
-
-    ssh.sudo(
-            client,
-            'salt \'*\' ssh.set_auth_key_from_file ubuntu salt://keys/%s' % \
-            key_name)
-
-
-def master_salt_call_highstate():
-    # cloud = env.cloud()
-    # client = ssh.master_client(cloud)
-    # #ssh.sudo(client, 'salt-call state.highstate')
-    # # we want the events, salt-call does not trigger the master events
-    # ssh.sudo(client, 'salt \'master\' state.highstate')
-    highstate('master')
-
-
-def highstate(minion_id=None, grain=None):
-
-    cloud = env.cloud()
-    client = ssh.master_client(cloud)
-
-    if minion_id:
-        ssh.sudo(client, 'salt \'%s\' state.highstate' % minion_id)
-    elif grain:
-        ssh.sudo(client, 'salt -G \'%s\' state.highstate' % grain)
 
 
 def create_default_salt_folders(prefix=''):
@@ -69,8 +37,8 @@ def create_default_salt_files(prefix='', data=None):
     path_prefix = os.path.join(prefix, 'salt')
     create_salt_master_config(path_prefix, data.get('master', None))
     create_salt_cloud_config(path_prefix, data.get('config', None))
-    create_salt_cloud_profiles(path_prefix, data.get('profiles', None))
-    create_salt_cloud_providers(path_prefix, data.get('providers', None))
+    # create_salt_cloud_profiles(path_prefix, data.get('profiles', None))
+    # create_salt_cloud_providers(path_prefix, data.get('providers', None))
 
 
 def create_salt_cloud_profiles(prefix='', data=None):
@@ -131,7 +99,7 @@ def create_salt_master_config(prefix='', data=None):
   - git
 
 gitfs_remotes:
-  - git://github.com/cloudseed-project/cloudseed-states.git
+  - git://github.com/cloudseed-project/cloudseed-formulas.git
 
 file_roots:
   base:
