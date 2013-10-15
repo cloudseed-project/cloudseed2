@@ -15,7 +15,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     ## Networking
     # config.vm.network :forwarded_port, guest: 80, host: 8080, auto_correct: true
     # config.vm.network :public_network
-    
+
 
     ## For masterless, mount your salt file root
     config.vm.synced_folder "cloudseed/current/srv/", "/srv/"
@@ -33,7 +33,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         salt.minion_config = "cloudseed/current/vagrant/minion"
         salt.minion_key = "cloudseed/current/vagrant/minion.pem"
         salt.minion_pub = "cloudseed/current/vagrant/minion.pub"
-        #salt.bootstrap_script = "cloudseed/current/vagrant/bootstrap-salt.sh"
+        salt.bootstrap_script = "cloudseed/current/vagrant/bootstrap-salt.sh"
         salt.seed_master = {minion: salt.minion_pub}
         salt.verbose = true
         salt.install_type = "git"

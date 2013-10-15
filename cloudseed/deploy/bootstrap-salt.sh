@@ -1251,7 +1251,7 @@ __enable_universe_repository() {
 
 install_ubuntu_deps() {
     apt-get update
-    if [ $DISTRO_MAJOR_VERSION -gt 12 ] || [ $DISTRO_MAJOR_VERSION -eq 12 && $DISTRO_MINOR_VERSION -eq 10 ]; then
+    if [ $DISTRO_MAJOR_VERSION -gt 12 ] || ([ $DISTRO_MAJOR_VERSION -eq 12 ] && [ $DISTRO_MINOR_VERSION -eq 10 ]); then
         # Above Ubuntu 12.04 add-apt-repository is in a different package
         __apt_get_install_noinput software-properties-common || return 1
     else
@@ -1307,9 +1307,7 @@ install_ubuntu_daily_deps() {
 install_ubuntu_git_deps() {
     install_ubuntu_deps || return 1
     __apt_get_install_noinput git-core python-yaml python-m2crypto python-crypto \
-        msgpack-python python-zmq python-jinja2 python-pip || return 1
-
-     pip install gitpython
+        msgpack-python python-zmq python-jinja2 || return 1
 
     __git_clone_and_checkout || return 1
 
@@ -1442,7 +1440,7 @@ install_debian_6_deps() {
     if [ $_PIP_ALLOWED -eq $BS_TRUE ]; then
         echowarn "PyZMQ will be installed from PyPI in order to compile it against ZMQ3"
         echowarn "This is required for long term stable minion connections to the master."
-        echowarn "YOU WILL END UP WILL QUITE A FEW PACKAGES FROM DEBIAN UNSTABLE"
+        echowarn "YOU WILL END UP WITH QUITE A FEW PACKAGES FROM DEBIAN UNSTABLE"
         echowarn "Sleeping for 3 seconds so you can cancel..."
         sleep 3
 
@@ -1513,7 +1511,7 @@ install_debian_7_deps() {
     if [ $_PIP_ALLOWED -eq $BS_TRUE ]; then
         echowarn "PyZMQ will be installed from PyPI in order to compile it against ZMQ3"
         echowarn "This is required for long term stable minion connections to the master."
-        echowarn "YOU WILL END UP WILL QUITE A FEW PACKAGES FROM DEBIAN UNSTABLE"
+        echowarn "YOU WILL END UP WITH QUITE A FEW PACKAGES FROM DEBIAN UNSTABLE"
         echowarn "Sleeping for 3 seconds so you can cancel..."
         sleep 3
 
