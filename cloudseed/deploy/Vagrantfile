@@ -14,16 +14,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     ## Networking
     {% for each in ports -%}
-    config.vm.network :forwarded_port, guest: {{ each.port }}, host: {{ each.port }} # rabbitmq
-    {% endfor -%}
-    
-    # config.vm.network :forwarded_port, guest: 80, host: 8080, auto_correct: true
-    # config.vm.network :forwarded_port, guest: 9160, host: 9160   # cassandra rpc_port (cqlsh)
-    # config.vm.network :public_network
-    
-
-
-
+    config.vm.network :forwarded_port, guest: {{ each.port }}, host: {{ each.port }} {{ '# %s'|format(each.label) if each.label else ''}}
+    {% endfor %}
+    {% if bridged -%}
+    config.vm.network :bridged
+    {% endif %} 
     ## For masterless, mount your salt file root
     config.vm.synced_folder "cloudseed/current/srv/", "/srv/"
 

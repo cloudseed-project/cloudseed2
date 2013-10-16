@@ -7,6 +7,7 @@ options:
   -o <os>, --os=<os>        OS id to use
   -b <box>, --box=<box>     Box id to use
   -p <port>, --port=<port>  Enable port forwarding for the specified ports.
+  -g, --bridge              Enable Bridged Networking
   -h, --help                Show this screen.
 
 
@@ -15,6 +16,7 @@ import os
 from itertools import chain
 import logging
 from docopt import docopt
+from promptly import Form
 from cloudseed.utils.filesystem import symlink
 from cloudseed.utils.filesystem import create_default_cloudseed_folders
 from cloudseed.utils.salt import create_default_salt_folders
@@ -24,30 +26,21 @@ from cloudseed.utils.vagrant import create_default_vagrant_files
 from cloudseed.utils import data
 from cloudseed.compat import iterkeys
 
-from promptly import Form
-from promptly import StringInput
-from promptly import IntegerInput
-from promptly import ChoiceInput
-from promptly import BooleanInput
-from promptly import Branch
-from promptly.inputs import MultiSelectInput
-
-
 log = logging.getLogger(__name__)
 
 
 def run(argv):
     args = docopt(__doc__, argv=argv)
-
     init(name=args['--name'],
          os_id=args['--os'],
          box_id=args['--box'],
-         ports=args['--port'])
+         ports=args['--port'],
+         bridged=args['--bridge'])
 
     print('Cloudseed initialized')
 
 
-def init(name=None, os_id=None, box_id=None, ports=None):
+def init(name=None, os_id=None, box_id=None, ports=None, bridged=False):
     selected_ports = None
     key_os = None
     key_box = None
@@ -64,16 +57,16 @@ def init(name=None, os_id=None, box_id=None, ports=None):
             default='default')
 
     if not box_id or not os_id:
-        choices = tuple(iterkeys(available_boxes))
-        form.add.choice('os_id', 'Choose your Operating System',
+        choices = sorted(tuple(iterkeys(available_boxes)))
+        form.add.select('os_id', 'Choose your Operating System',
             choices, default=1)
 
         form.add.branch(build_branch, boxes=available_boxes)
 
     if not ports:
-        form.add('ports', MultiSelectInput(
+        form.add.multiselect('ports',
             'Choose ports you would like to forward:',
-            iterkeys(available_ports)))
+            sorted(iterkeys(available_ports)))
 
     # run the form if we are missing information from the
     # command line arguments
@@ -87,8 +80,16 @@ def init(name=None, os_id=None, box_id=None, ports=None):
 
         if 'ports' in results:
             port_map = form.ports.value
+
+            def map_action(value):
+                _, key = value
+                ports = available_ports[key]
+                return [{'port': x['port'],
+                         'label': '%s %s' % (key.lower(), x.get('label', ''))}
+                         for x in ports]
+
             selected_ports = list(chain(
-                *[available_ports[v] for k, v in port_map])
+                *map(map_action, port_map))
             )
 
     # the user could pass in any case, lets normalize it for our search
@@ -116,7 +117,11 @@ def init(name=None, os_id=None, box_id=None, ports=None):
     create_default_salt_files(prefix)
     create_default_vagrant_folders(prefix)
 
-    create_default_vagrant_files(prefix, box=key_box, box_url=box_url, ports=selected_ports)
+    create_default_vagrant_files(prefix,
+        box=key_box,
+        box_url=box_url,
+        ports=selected_ports,
+        bridged=bridged)
 
     symlink(prefix, os.path.join(cwd, 'cloudseed', 'current'))
 
@@ -129,7 +134,7 @@ def build_branch(form, boxes):
     choices = ['%s [%s]' % (x, ctx[x]['label']) for x in keys]
 
     branch = Form()
-    branch.add.choice(
+    branch.add.select(
         'box_id',
         'Choose Virtual Machine Image for %s' % label,
         choices, default=1)
