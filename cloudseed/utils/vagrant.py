@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 import os
 import subprocess
+import jinja2
 from .keys import gen_keys
 from .writers import write_string
 from .filesystem import mkdirs
@@ -14,19 +15,21 @@ def create_default_vagrant_folders(prefix=''):
         )
 
 
-def create_default_vagrant_files(prefix=''):
+def create_default_vagrant_files(prefix='', **kwargs):
     '''
     Create the default salt configuration files.
+    supported kwargs (for creating vagrant file):
+    box, box_url, ports
     '''
 
     path_prefix = os.path.join(prefix, 'vagrant')
     create_vagrant_minion_config(path_prefix)
     create_vagrant_minion_keys(path_prefix)
-    create_vagrant_vagrantfile()
+    create_vagrant_vagrantfile(**kwargs)
     create_vagrant_bootstrap(path_prefix)
 
 
-def create_vagrant_vagrantfile(prefix=''):
+def create_vagrant_vagrantfile(prefix='', **kwargs):
     # TODO handle error if vagrant is not installed.
     p = subprocess.Popen('vagrant init', shell=True)
     p.wait()
@@ -35,10 +38,11 @@ def create_vagrant_vagrantfile(prefix=''):
     current_path = os.path.normpath(current_path)
 
     cloudseed_deploy_path = os.path.join(current_path, 'deploy')
-    vagrantfile = read_file(os.path.join(cloudseed_deploy_path, 'Vagrantfile'))
 
+    vagrantfile = read_file(os.path.join(cloudseed_deploy_path, 'Vagrantfile'))
+    template = jinja2.Template(vagrantfile)
     filename = os.path.join(prefix, 'Vagrantfile')
-    write_string(filename, vagrantfile)
+    write_string(filename, template.render(kwargs))
 
 
 def create_vagrant_bootstrap(prefix=''):

@@ -4,6 +4,7 @@ from subprocess import call
 from docopt import docopt
 from docopt import DocoptExit
 import cloudseed
+from cloudseed.utils.config import load_config
 
 
 def cloudseed_main():

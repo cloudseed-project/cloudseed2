@@ -16,3 +16,4 @@ elif is_py3:
     from urllib.parse import urlparse
     from urllib.parse import quote as urlquote
     string_type = str
+    iterkeys = dict.keys

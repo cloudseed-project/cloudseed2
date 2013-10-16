@@ -9,12 +9,19 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # please see the online documentation at vagrantup.com.
 
     # Every Vagrant virtual environment requires a box to build off of.
-    config.vm.box = "precise64"
-    config.vm.box_url = "http://files.vagrantup.com/precise64.box"
+    config.vm.box = "{{ box }}"
+    config.vm.box_url = "{{ box_url }}"
 
     ## Networking
+    {% for each in ports -%}
+    config.vm.network :forwarded_port, guest: {{ each.port }}, host: {{ each.port }} # rabbitmq
+    {% endfor -%}
+    
     # config.vm.network :forwarded_port, guest: 80, host: 8080, auto_correct: true
+    # config.vm.network :forwarded_port, guest: 9160, host: 9160   # cassandra rpc_port (cqlsh)
     # config.vm.network :public_network
+    
+
 
 
     ## For masterless, mount your salt file root
