@@ -65,13 +65,13 @@ def init(name=None, os_id=None, box_id=None, ports=None, bridged=False):
 
     if not ports:
         form.add.multiselect('ports',
-            'Choose ports you would like to forward:',
+            'Choose ports you would like to forward',
             sorted(iterkeys(available_ports)))
 
     # run the form if we are missing information from the
     # command line arguments
     if len(form):
-        form.run(prefix='[cloudseed] ')
+        form.run(prefix=None)
         results = dict(form)
 
         if 'os_id' in results:

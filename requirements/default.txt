@@ -1,6 +1,5 @@
 confypy
 docopt
 jinja2
-pycrypto
 pyyaml
 requests

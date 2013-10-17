@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 import os
-from cloudseed.utils import env
 from .writers import write_string
 from .filesystem import mkdirs
 
@@ -36,56 +35,6 @@ def create_default_salt_files(prefix='', data=None):
 
     path_prefix = os.path.join(prefix, 'salt')
     create_salt_master_config(path_prefix, data.get('master', None))
-    create_salt_cloud_config(path_prefix, data.get('config', None))
-    # create_salt_cloud_profiles(path_prefix, data.get('profiles', None))
-    # create_salt_cloud_providers(path_prefix, data.get('providers', None))
-
-
-def create_salt_cloud_profiles(prefix='', data=None):
-    '''
-    Salt master config
-    The YAML write, though correct, was not pretty
-    so we opt for a pretty formatted string
-    '''
-    data = '''master:
-  provider: aws
-  image: ami-8e109ebe
-  size: Micro Instance
-  script: Ubuntu-master
-  ssh_username: ubuntu
-'''
-    filename = os.path.join(prefix, 'cloud.profiles')
-    write_string(filename, data)
-
-
-def create_salt_cloud_providers(prefix='', data=None):
-    '''
-    Salt master config
-    The YAML write, though correct, was not pretty
-    so we opt for a pretty formatted string
-    '''
-
-    data = '''aws:
-  id: <id>
-  key: <secret>
-  location: us-west-2
-  provider: aws
-'''
-    filename = os.path.join(prefix, 'cloud.providers')
-    write_string(filename, data)
-
-
-def create_salt_cloud_config(prefix='', data=None):
-    '''
-    Salt master config
-    The YAML write, though correct, was not pretty
-    so we opt for a pretty formatted string
-    '''
-    data = '''
-display_ssh_output: False
-'''
-    filename = os.path.join(prefix, 'cloud')
-    write_string(filename, data)
 
 
 def create_salt_master_config(prefix='', data=None):
