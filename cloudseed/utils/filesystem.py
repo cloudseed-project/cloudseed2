@@ -44,6 +44,13 @@ def current_env_path():
     return os.path.join(os.getcwd(), 'cloudseed', 'current')
 
 
+def resource_path():
+    current_path = os.path.join(os.path.dirname(__file__), '../')
+    current_path = os.path.normpath(current_path)
+
+    return os.path.join(current_path, 'deploy')
+
+
 def mkdirs(*args):
     # in py3 map is py2's imap, it won't
     # run until it's iterated over.

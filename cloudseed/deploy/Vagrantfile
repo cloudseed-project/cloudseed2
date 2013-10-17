@@ -35,12 +35,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         salt.minion_config = "cloudseed/current/vagrant/minion"
         salt.minion_key = "cloudseed/current/vagrant/minion.pem"
         salt.minion_pub = "cloudseed/current/vagrant/minion.pub"
-        salt.bootstrap_script = "cloudseed/current/vagrant/bootstrap-salt.sh"
-        salt.seed_master = {minion: salt.minion_pub}
+        salt.seed_master = {minion: "cloudseed/current/vagrant/minion.pub"}
         salt.verbose = true
-        salt.install_type = "git"
-        salt.install_args = "v0.17.0"
-        salt.bootstrap_options = "-D -F"
+        salt.install_type = "stable"
+        salt.bootstrap_options = "-F"
     end
 
 end

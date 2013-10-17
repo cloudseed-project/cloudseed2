@@ -6,6 +6,7 @@ from .keys import gen_keys
 from .writers import write_string
 from .filesystem import mkdirs
 from .filesystem import read_file
+from .filesystem import resource_path
 
 
 def create_default_vagrant_folders(prefix=''):
@@ -26,7 +27,6 @@ def create_default_vagrant_files(prefix='', **kwargs):
     create_vagrant_minion_config(path_prefix)
     create_vagrant_minion_keys(path_prefix)
     create_vagrant_vagrantfile(**kwargs)
-    create_vagrant_bootstrap(path_prefix)
 
 
 def create_vagrant_vagrantfile(prefix='', **kwargs):
@@ -34,10 +34,7 @@ def create_vagrant_vagrantfile(prefix='', **kwargs):
     p = subprocess.Popen('vagrant init', shell=True)
     p.wait()
 
-    current_path = os.path.join(os.path.dirname(__file__), '../')
-    current_path = os.path.normpath(current_path)
-
-    cloudseed_deploy_path = os.path.join(current_path, 'deploy')
+    cloudseed_deploy_path = resource_path()
 
     vagrantfile = read_file(os.path.join(cloudseed_deploy_path, 'Vagrantfile'))
     template = jinja2.Template(vagrantfile)
@@ -45,21 +42,12 @@ def create_vagrant_vagrantfile(prefix='', **kwargs):
     write_string(filename, template.render(kwargs))
 
 
-def create_vagrant_bootstrap(prefix=''):
-    current_path = os.path.join(os.path.dirname(__file__), '../')
-    current_path = os.path.normpath(current_path)
-
-    cloudseed_deploy_path = os.path.join(current_path, 'deploy')
-
-    bootstrap = read_file(
-        os.path.join(cloudseed_deploy_path, 'bootstrap-salt.sh'))
-
-    filename = os.path.join(prefix, 'bootstrap-salt.sh')
-    write_string(filename, bootstrap)
-
-
 def create_vagrant_minion_keys(prefix):
-    pem, pub = gen_keys()
+
+    resources = resource_path()
+    pem = read_file(os.path.join(resources, 'minion.pem'))
+    pub = read_file(os.path.join(resources, 'minion.pub'))
+
     filename_pem = os.path.join(prefix, 'minion.pem')
     filename_pub = os.path.join(prefix, 'minion.pub')
 
@@ -68,7 +56,7 @@ def create_vagrant_minion_keys(prefix):
 
 
 def create_vagrant_minion_config(prefix='', data=None):
-    data = '''id: seed-minion.pub
+    data = '''id: minion
 master: localhost
 grains:
   roles:
