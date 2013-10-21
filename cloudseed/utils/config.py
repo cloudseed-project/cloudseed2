@@ -2,14 +2,14 @@ import os
 from confypy import Config
 from confypy import Location
 
-_cached_config = None
+CONFIG = None
 
 
-def load_config():
-    global _cached_config
+def load_config(**kwargs):
+    global CONFIG
 
-    if _cached_config:
-        return _cached_config
+    if CONFIG:
+        return CONFIG
 
     local_settings = os.path.join(os.getcwd(), '.cloudseed')
 
@@ -21,9 +21,10 @@ def load_config():
     config = Config(chain=True, defaults=defaults)
     config.locations = [
         Location.from_env_path('CLOUDSEED_SETTINGS', parser='yaml'),
-        Location.from_path(local_settings, parser='yaml')
+        Location.from_path(local_settings, parser='yaml'),
+        Location.from_dict(kwargs)
     ]
 
-    _cached_config = config.data
+    CONFIG = config.data
 
     return config.data

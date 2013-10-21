@@ -16,6 +16,7 @@ import os
 import logging
 from docopt import docopt
 from cloudseed import actions
+from cloudseed import forms
 log = logging.getLogger(__name__)
 
 
@@ -38,14 +39,22 @@ def run(argv):
 def init(name='default', os_id=None, box_id=None, ports=None, bridged=False):
 
     cwd = os.getcwd()
+
+    results = forms.init.run(
+        name=name,
+        box_id=box_id,
+        os_id=os_id,
+        ports=ports)
+
     try:
         actions.init.run(
             path=cwd,
-            name=name,
-            box_id=box_id,
-            os_id=os_id,
-            ports=ports,
+            name=results['name'],
+            box_id=results['box_id'],
+            box_url=results['box_url'],
+            ports=results['ports'],
             bridged=bridged)
     except ValueError as e:
         print(e.message)
         raise
+
