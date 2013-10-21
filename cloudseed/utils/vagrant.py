@@ -59,7 +59,7 @@ def create_vagrant_minion_config(prefix='', data=None):
 master: localhost
 grains:
   roles:
-    - <role>
+    - vagrant
 
 '''
     filename = os.path.join(prefix, 'minion')

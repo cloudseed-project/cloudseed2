@@ -13,18 +13,15 @@ options:
 
 '''
 import os
-from itertools import chain
 import logging
 from docopt import docopt
-from promptly import Form
 from cloudseed.utils.filesystem import symlink
 from cloudseed.utils.filesystem import create_default_cloudseed_folders
 from cloudseed.utils.salt import create_default_salt_folders
 from cloudseed.utils.salt import create_default_salt_files
 from cloudseed.utils.vagrant import create_default_vagrant_folders
 from cloudseed.utils.vagrant import create_default_vagrant_files
-from cloudseed.utils import data
-from cloudseed.compat import iterkeys
+from cloudseed import forms
 
 log = logging.getLogger(__name__)
 
@@ -41,69 +38,12 @@ def run(argv):
 
 
 def init(name=None, os_id=None, box_id=None, ports=None, bridged=False):
-    selected_ports = None
-    key_os = None
-    key_box = None
-    box_url = None
 
-    available_boxes = data.fetch_boxes()
-    available_ports = data.fetch_ports()
-
-    form = Form()
-
-    if not name:
-        form.add.string('name',
-            'Provide a name for this environment',
-            default='default')
-
-    if not box_id or not os_id:
-        choices = sorted(tuple(iterkeys(available_boxes)))
-        form.add.select('os_id', 'Choose your Operating System',
-            choices, default=1)
-
-        form.add.branch(build_branch, boxes=available_boxes)
-
-    if not ports:
-        form.add.multiselect('ports',
-            'Choose ports you would like to forward',
-            sorted(iterkeys(available_ports)))
-
-    # run the form if we are missing information from the
-    # command line arguments
-    if len(form):
-        form.run(prefix=None)
-        results = dict(form)
-
-        if 'os_id' in results:
-            key_os = form.os_id.value[1]
-            key_box, _ = form.box_id.value[1].split(' ', 1)
-
-        if 'ports' in results:
-            port_map = form.ports.value
-
-            def map_action(value):
-                _, key = value
-                ports = available_ports[key]
-                return [{'port': x['port'],
-                         'label': '%s %s' % (key.lower(), x.get('label', ''))}
-                         for x in ports]
-
-            selected_ports = list(chain(
-                *map(map_action, port_map))
-            )
-
-    # the user could pass in any case, lets normalize it for our search
-    # command line options override any for selected options
-    if os_id and box_id:
-        try:
-            key_os = next(x for x in iterkeys(available_boxes) if x.lower() == os_id.lower())
-            key_box = next(x for x in iterkeys(available_boxes[key_os]) if x.lower() == box_id.lower())
-        except StopIteration:
-            raise ValueError
-    if ports:
-        selected_ports = [{'port': x} for x in ports]
-
-    box_url = available_boxes[key_os][key_box]['url']
+    results = forms.init.run(
+        name=name,
+        box_id=box_id,
+        os_id=os_id,
+        ports=ports)
 
     create_default_cloudseed_folders()
 
@@ -118,26 +58,9 @@ def init(name=None, os_id=None, box_id=None, ports=None, bridged=False):
     create_default_vagrant_folders(prefix)
 
     create_default_vagrant_files(prefix,
-        box=key_box,
-        box_url=box_url,
-        ports=selected_ports,
+        box=results['box_id'],
+        box_url=results['box_url'],
+        ports=results['ports'],
         bridged=bridged)
 
     symlink(prefix, os.path.join(cwd, 'cloudseed', 'current'))
-
-
-def build_branch(form, boxes):
-    _, label = form.os_id.value
-
-    ctx = boxes.get(label, {})
-    keys = tuple(iterkeys(ctx))
-    choices = ['%s [%s]' % (x, ctx[x]['label']) for x in keys]
-
-    branch = Form()
-    branch.add.select(
-        'box_id',
-        'Choose Virtual Machine Image for %s' % label,
-        choices, default=1)
-
-    return branch
-
