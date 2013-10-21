@@ -13,7 +13,12 @@ def load_config():
 
     local_settings = os.path.join(os.getcwd(), '.cloudseed')
 
-    config = Config(chain=True)
+    defaults = {
+    'boxes_url': 'https://raw.github.com/cloudseed-project/cloudseed-data/master/boxes.yaml',
+    'ports_url': 'https://raw.github.com/cloudseed-project/cloudseed-data/master/ports.yaml'
+    }
+
+    config = Config(chain=True, defaults=defaults)
     config.locations = [
         Location.from_env_path('CLOUDSEED_SETTINGS', parser='yaml'),
         Location.from_path(local_settings, parser='yaml')
