@@ -4,7 +4,7 @@ from cloudseed.utils import data
 from cloudseed.compat import iterkeys
 
 
-def run(name='default',
+def run(name=None,
     box_id=None,
     os_id=None,
     ports=()):
@@ -59,6 +59,7 @@ def run(name='default',
         selected_ports = [{'port': x} for x in ports]
 
     results.update({
+        'name': results.get('name', name),
         'box_id': key_box,
         'os_id': key_os,
         'box_url': available_boxes[key_os][key_box]['url'],

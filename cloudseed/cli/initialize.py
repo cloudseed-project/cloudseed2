@@ -15,52 +15,37 @@ options:
 import os
 import logging
 from docopt import docopt
-from cloudseed.utils.filesystem import symlink
-from cloudseed.utils.filesystem import create_default_cloudseed_folders
-from cloudseed.utils.salt import create_default_salt_folders
-from cloudseed.utils.salt import create_default_salt_files
-from cloudseed.utils.vagrant import create_default_vagrant_folders
-from cloudseed.utils.vagrant import create_default_vagrant_files
-from cloudseed import forms
-
+from cloudseed import actions
 log = logging.getLogger(__name__)
 
 
 def run(argv):
     args = docopt(__doc__, argv=argv)
-    init(name=args['--name'],
-         os_id=args['--os'],
-         box_id=args['--box'],
-         ports=args['--port'],
-         bridged=args['--bridge'])
+    message = 'Cloudseed initialized'
 
-    print('Cloudseed initialized')
+    try:
+        init(name=args['--name'],
+             os_id=args['--os'],
+             box_id=args['--box'],
+             ports=args['--port'],
+             bridged=args['--bridge'])
+    except:
+        message = 'Cloudseed failed to initialize'
+
+    print(message)
 
 
-def init(name=None, os_id=None, box_id=None, ports=None, bridged=False):
-
-    results = forms.init.run(
-        name=name,
-        box_id=box_id,
-        os_id=os_id,
-        ports=ports)
-
-    create_default_cloudseed_folders()
-
-    if name == 'current':
-        print('Invalid name, \'current\' is reserved.')
-        return
+def init(name='default', os_id=None, box_id=None, ports=None, bridged=False):
 
     cwd = os.getcwd()
-    prefix = os.path.join(cwd, 'cloudseed', name)
-    create_default_salt_folders(prefix)
-    create_default_salt_files(prefix)
-    create_default_vagrant_folders(prefix)
-
-    create_default_vagrant_files(prefix,
-        box=results['box_id'],
-        box_url=results['box_url'],
-        ports=results['ports'],
-        bridged=bridged)
-
-    symlink(prefix, os.path.join(cwd, 'cloudseed', 'current'))
+    try:
+        actions.init.run(
+            path=cwd,
+            name=name,
+            box_id=box_id,
+            os_id=os_id,
+            ports=ports,
+            bridged=bridged)
+    except ValueError as e:
+        print(e.message)
+        raise
