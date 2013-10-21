@@ -23,6 +23,8 @@ tests_require = ['nose']
 
 packages = [
     'cloudseed',
+    'cloudseed.actions',
+    'cloudseed.forms',
     'cloudseed.cli',
     'cloudseed.utils',
 ]
