@@ -13,7 +13,8 @@ def run(
     box_id=None,
     box_url=None,
     bridged=False,
-    ports=()):
+    ports=(),
+    folders=()):
 
     create_default_cloudseed_folders()
 
@@ -29,6 +30,7 @@ def run(
         box=box_id,
         box_url=box_url,
         ports=ports,
+        folders=folders,
         bridged=bridged)
 
     symlink(prefix, os.path.join(path, 'cloudseed', 'current'))

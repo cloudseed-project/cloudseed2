@@ -74,8 +74,8 @@ def build_form(
     box_id=None,
     os_id=None,
     ports=(),
-    data_boxes=(),
-    data_ports=()):
+    data_boxes={},
+    data_ports={}):
 
     form = Form()
 

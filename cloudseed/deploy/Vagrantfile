@@ -18,9 +18,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     {% endfor %}
     {% if bridged -%}
     config.vm.network :bridged
-    {% endif %} 
+    {% endif -%} 
+    
     ## For masterless, mount your salt file root
     config.vm.synced_folder "cloudseed/current/srv/", "/srv/"
+
+    {% for each in folders -%}
+    config.vm.synced_folder "{{ each.host }}", "{{ each.guest }}"
+    {% endfor -%}
 
     ## Install Saltstack GitFS requirements
     config.vm.provision :shell, :inline => "sudo apt-get update"
