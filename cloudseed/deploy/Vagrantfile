@@ -22,7 +22,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     {% for each in folders -%}
     config.vm.synced_folder "{{ each.host }}", "{{ each.guest }}"
-    {% endfor -%}
+    {% endfor %}
 
     ## Install Saltstack GitFS requirements
     config.vm.provision :shell, :inline => "sudo apt-get update"
