@@ -46,6 +46,8 @@ def init(name='default', os_id=None, box_id=None, ports=None, bridged=False):
         os_id=os_id,
         ports=ports)
 
+    folders = ({'host': 'cloudseed/current/srv/', 'guest': '/srv/'},)
+
     try:
         actions.init.run(
             path=cwd,
@@ -53,6 +55,7 @@ def init(name='default', os_id=None, box_id=None, ports=None, bridged=False):
             box_id=results['box_id'],
             box_url=results['box_url'],
             ports=results['ports'],
+            folders=folders,
             bridged=bridged)
     except ValueError as e:
         print(e.message)

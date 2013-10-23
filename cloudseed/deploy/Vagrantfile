@@ -19,9 +19,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     {% if bridged -%}
     config.vm.network :bridged
     {% endif -%} 
-    
-    ## For masterless, mount your salt file root
-    config.vm.synced_folder "cloudseed/current/srv/", "/srv/"
 
     {% for each in folders -%}
     config.vm.synced_folder "{{ each.host }}", "{{ each.guest }}"
