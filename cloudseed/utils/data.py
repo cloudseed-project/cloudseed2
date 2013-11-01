@@ -1,6 +1,7 @@
 import requests
 import yaml
 from .config import load_config
+from . import filesystem
 
 
 def fetch_ports():
@@ -14,6 +15,13 @@ def fetch_boxes():
 
 
 def fetch_yaml(url):
-    r = requests.get(url)
-    return yaml.load(r.text)
+    import pdb; pdb.set_trace()
+    if url.startswith('http://') or \
+       url.startswith('https://'):
+        r = requests.get(url)
+        data = r.text
+    else:
+        data = filesystem.read_file(url)
+
+    return yaml.load(data)
 
