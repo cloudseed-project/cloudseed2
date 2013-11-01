@@ -1,0 +1,7 @@
+include LICENSE
+include README.md
+include setup.py
+recursive-include cloudseed *.py
+recursive-include requirements *.txt
+recursive-include cloudseed/deploy *.*
+prune *.pyc
