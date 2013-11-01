@@ -34,7 +34,6 @@ def create_vagrant_vagrantfile(prefix='', **kwargs):
     p.wait()
 
     cloudseed_deploy_path = resource_path()
-    import pdb; pdb.set_trace()
     vagrantfile = read_file(os.path.join(cloudseed_deploy_path, 'Vagrantfile'))
     template = jinja2.Template(vagrantfile)
     filename = os.path.join(prefix, 'Vagrantfile')
