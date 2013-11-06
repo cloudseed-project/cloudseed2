@@ -23,7 +23,6 @@ def mkdir_p(path):
 
 
 def symlink(source, link_name):
-
     try:
         os.unlink(link_name)
     except OSError as e:
@@ -32,12 +31,28 @@ def symlink(source, link_name):
         else:
             log.exception(e)
 
-    try:
-        os.symlink(source, link_name)
-    except OSError as e:
-        log.error(
+    os_symlink = getattr(os, "symlink", None)
+
+    if callable(os_symlink):
+        try:
+            os_symlink(source, link_name)
+        except OSError as e:
+            log.error(
             'Filed to create symlink for %s -> %s',
             source, link_name)
+    else:
+        # windows compatibility
+        # http://stackoverflow.com/questions/6260149/os-symlink-support-in-windows
+        import ctypes
+        csl = ctypes.windll.kernel32.CreateSymbolicLinkW
+        csl.argtypes = (ctypes.c_wchar_p, ctypes.c_wchar_p, ctypes.c_uint32)
+        csl.restype = ctypes.c_ubyte
+        flags = 1 if os.path.isdir(source) else 0
+        if csl(link_name, source, flags) == 0:
+            log.error(
+            'Filed to create symlink for %s -> %s',
+            source, link_name)
+            raise ctypes.WinError()
 
 
 def current_env_path():
