@@ -15,7 +15,8 @@ def run(
     bridged=False,
     ports=(),
     folders=(),
-    version='stable'):
+    version='stable',
+    forward_agent=True):
 
     create_default_cloudseed_folders()
 
@@ -33,6 +34,7 @@ def run(
         ports=ports,
         folders=folders,
         bridged=bridged,
-        version=version)
+        version=version,
+        forward_agent=forward_agent)
 
     symlink(prefix, os.path.join(path, 'cloudseed', 'current'))

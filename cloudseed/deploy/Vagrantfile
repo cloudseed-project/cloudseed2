@@ -20,6 +20,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.network :bridged
     {% endif -%} 
 
+    {% if forward_agent -%}
+    config.ssh.forward_agent = true
+    {% endif -%}
+
     {% for each in folders -%}
     config.vm.synced_folder "{{ each.host }}", "{{ each.guest }}"
     {% endfor %}
