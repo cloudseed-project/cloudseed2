@@ -37,4 +37,9 @@ def run(
         version=version,
         forward_agent=forward_agent)
 
-    symlink(prefix, os.path.join(path, 'cloudseed', 'current'))
+    current_path = os.getcwd()
+    cloudseed_path = os.path.join(path, 'cloudseed')
+
+    os.chdir(cloudseed_path)
+    symlink(name, 'current')
+    os.chdir(current_path)
