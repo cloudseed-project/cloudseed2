@@ -31,7 +31,7 @@ packages = [
 
 setup(
     name='cloudseed',
-    version='0.0.1',
+    version='0.0.2',
     description='Cloudseed',
     long_description=readme,
     author='Adam Venturella <aventurella@gmail.com>, Daniel Smith <dsmith@blitzagency.com>',
