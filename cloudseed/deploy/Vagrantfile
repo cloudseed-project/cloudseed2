@@ -4,11 +4,8 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-    # All Vagrant configuration is done here. The most common configuration
-    # options are documented and commented below. For a complete reference,
-    # please see the online documentation at vagrantup.com.
 
-    # Every Vagrant virtual environment requires a box to build off of.
+    ## Box
     config.vm.box = "{{ box }}"
     config.vm.box_url = "{{ box_url }}"
 
@@ -19,19 +16,25 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     {% if bridged -%}
     config.vm.network :bridged
     {% endif -%} 
-
     {% if forward_agent -%}
     config.ssh.forward_agent = true
     {% endif -%}
 
+    ## Shares
     {% for each in folders -%}
     config.vm.synced_folder "{{ each.host }}", "{{ each.guest }}"
     {% endfor %}
 
-    ## Install Saltstack GitFS requirements
-    config.vm.provision :shell, :inline => "sudo apt-get update"
-    config.vm.provision :shell, :inline => "sudo apt-get install python-dev git-core python-setuptools -y"
-    config.vm.provision :shell, :inline => "sudo easy_install GitPython"
+    ## Box Specs
+    config.vm.provider "virtualbox" do |v|
+      v.name = "{{ name }}"
+      v.customize ["modifyvm", :id, "--cpus", "2"]
+      v.customize ["modifyvm", :id, "--memory", "2048"]
+      v.customize ["modifyvm", :id, "--ioapic", "on"]
+    end
+
+    ## Provisioning: Salt GitFS requirements
+    config.vm.provision :shell, :inline => "python -c \"import gitdb, git\"; if [ $? -ne 0 ]; then sudo apt-get update; sudo apt-get install python-dev git-core curl -y; curl --silent --show-error --retry 5 https://bootstrap.pypa.io/get-pip.py | sudo python; sudo pip install \"GitPython==0.3.2.RC1\" gitdb; fi"
 
     ## Salt:
     config.vm.provision :salt do |salt|
@@ -49,7 +52,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         {% else %}
         salt.install_type = "git"
         salt.install_args = "{{ version }}"
-        salt.bootstrap_options = "-D -F"
+        salt.bootstrap_options = "-F -U -K -D -M"
         {% endif -%}
     end
 
