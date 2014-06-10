@@ -27,8 +27,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     ## Box Specs
     config.vm.provider "virtualbox" do |v|
-      {% if name -%}
-      v.name = "{{ name }}"
+      {% if project_name -%}
+      v.name = "{{ project_name }}"
       {% endif -%}
       v.customize ["modifyvm", :id, "--cpus", "2"]
       v.customize ["modifyvm", :id, "--memory", "2048"]
