@@ -29,7 +29,6 @@ def run(
     create_default_vagrant_folders(prefix)
 
     create_default_vagrant_files(prefix,
-        project_name=project_name,
         box=box_id,
         box_url=box_url,
         ports=ports,
