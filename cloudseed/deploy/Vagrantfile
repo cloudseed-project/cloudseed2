@@ -9,7 +9,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.box = "{{ box }}"
     {% if box_url %}
     config.vm.box_url = "{{ box_url }}"
-    {% endif -%}
+    {% endif %}
 
     ## Networking
     {% for each in ports -%}
