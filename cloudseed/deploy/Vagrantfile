@@ -7,7 +7,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     ## Box
     config.vm.box = "{{ box }}"
+    {% if box_url %}
     config.vm.box_url = "{{ box_url }}"
+    {% endif -%}
 
     ## Networking
     {% for each in ports -%}
@@ -15,7 +17,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     {% endfor %}
     {% if bridged -%}
     config.vm.network :bridged
-    {% endif -%} 
+    {% endif -%}
     {% if forward_agent -%}
     config.ssh.forward_agent = true
     {% endif -%}
@@ -34,7 +36,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
 
     ## Provisioning: Salt GitFS requirements
-    config.vm.provision :shell, :inline => "python -c \"import gitdb, git\"; if [ $? -ne 0 ]; then sudo apt-get update; sudo apt-get install python-dev git-core curl -y; curl --silent --show-error --retry 5 https://bootstrap.pypa.io/get-pip.py | sudo python; sudo pip install \"GitPython==0.3.2.RC1\" gitdb; fi"
+    config.vm.provision :shell, :inline => "python -c \"import gitdb, git\"; if [ $? -ne 0 ]; then sudo apt-get update; sudo apt-get install python-dev git-core curl -y; curl --silent --show-error --retry 5 https://bootstrap.pypa.io/get-pip.py | sudo python; sudo pip install GitPython gitdb; fi"
 
     ## Salt:
     config.vm.provision :salt do |salt|
